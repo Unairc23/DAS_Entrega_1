@@ -9,41 +9,61 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class MainRecyclerAdapter extends RecyclerView.Adapter<MainViewHolder> {
-    private ArrayList<String> losnombres;
+public class MainRecyclerAdapter extends RecyclerView.Adapter<MainViewHolder> implements MainViewHolder.OnItemClickListener, MainViewHolder.OnItemLongClickListener {
+    private ArrayList<Actividad> lasActividades;
     private ArrayList<Integer> lasimagenes;
-    private static ArrayList<Boolean> seleccionados;
+    private MainActivity mainActivity;
 
-    public MainRecyclerAdapter(ArrayList<String> nombres, ArrayList<Integer> imagenes) {
-        losnombres = nombres;
-        lasimagenes = imagenes;
-        seleccionados  = new ArrayList<Boolean>();
-        for (int i = 0; i < losnombres.size(); i++){
-            seleccionados.add(false);
-        }
+    public MainRecyclerAdapter(ArrayList<Actividad> actividades, ArrayList<Integer> imagenes, MainActivity activity) {
+        this.lasActividades = actividades;
+        this.lasimagenes = imagenes;
+        this.mainActivity = activity;
     }
 
+    @NonNull
+    @Override
     public MainViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View elLayoutDeCadaItem= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card, parent, false);
-        MainViewHolder mvh = new MainViewHolder(elLayoutDeCadaItem);
-        mvh.seleccion = seleccionados;
-        return mvh;
+        return new MainViewHolder(elLayoutDeCadaItem, this, this);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MainViewHolder holder, int position) {
-        holder.eltexto.setText(losnombres.get(position));
+        holder.eltexto.setText(lasActividades.get(position).getNombre());
         holder.laimagen.setImageResource(lasimagenes.get(position));
     }
+
     @Override
     public int getItemCount() {
-        return losnombres.size();
+        return lasActividades.size();
     }
 
-    public void addItem(String nombre, int imagen) {
-        losnombres.add(nombre);
+    @Override
+    public void onItemClicked(int position) {
+        if (mainActivity != null) {
+            mainActivity.abrirDetalles(position);
+        }
+    }
+
+    @Override
+    public void onItemLongClicked(int position) {
+        if (mainActivity != null) {
+            mainActivity.eliminarElemento(position);
+        }
+    }
+
+    public void addItem(Actividad actividad, int imagen) {
+        lasActividades.add(actividad);
         lasimagenes.add(imagen);
-        seleccionados.add(false);
-        notifyItemInserted(losnombres.size() - 1);
+        notifyItemInserted(lasActividades.size() - 1);
+    }
+
+    public void removeItem(int position) {
+        if (position >= 0 && position < lasActividades.size()) {
+            lasActividades.remove(position);
+            lasimagenes.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, lasActividades.size());
+        }
     }
 }

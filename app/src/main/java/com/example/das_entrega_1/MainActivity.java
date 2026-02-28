@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private MainRecyclerAdapter eladaptador;
     private ActivityResultLauncher<Intent> startActivityIntent;
     private miDB gestorDB;
+    private ArrayList<Actividad> actividades;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,20 +42,21 @@ public class MainActivity extends AppCompatActivity {
                         result -> {
                             if (result.getResultCode() == RESULT_OK) {
                                 if (result.getData() != null) {
-                                    String nombre  = result.getData().getStringExtra("nombre");
+                                    String nombre = result.getData().getStringExtra("nombre");
                                     if (nombre != null && !nombre.isEmpty()) {
-                                        gestorDB.addNombre(nombre);
-                                        eladaptador.addItem(nombre, R.drawable.togetchi1);
+                                        long id = gestorDB.addNombre(nombre);
+                                        Actividad nuevaActividad = new Actividad(id, nombre);
+                                        eladaptador.addItem(nuevaActividad, R.drawable.togetchi1);
                                     }
                                 }
                             }
                         });
 
         RecyclerView lista = findViewById(R.id.mrv);
-        ArrayList<String> nombres = gestorDB.getNombres();
-        ArrayList<Integer> personajes = new ArrayList<>(Collections.nCopies(nombres.size(), R.drawable.togetchi1));
+        actividades = gestorDB.getActividades();
+        ArrayList<Integer> personajes = new ArrayList<>(Collections.nCopies(actividades.size(), R.drawable.togetchi1));
 
-        eladaptador = new MainRecyclerAdapter(nombres, personajes);
+        eladaptador = new MainRecyclerAdapter(actividades, personajes, this);
         lista.setAdapter(eladaptador);
         lista.setLayoutManager(new LinearLayoutManager(this));
 
@@ -65,5 +67,18 @@ public class MainActivity extends AppCompatActivity {
     public void añadirActividad() {
         Intent intent = new Intent(this, AddActivity.class);
         startActivityIntent.launch(intent);
+    }
+
+    public void eliminarElemento(int position) {
+        Actividad actividadAEliminar = actividades.get(position);
+        gestorDB.deleteActividadPorId(actividadAEliminar.getId());
+        eladaptador.removeItem(position);
+    }
+
+    public void abrirDetalles(int position) {
+        Intent intent = new Intent(this, DetallesActivity.class);
+        Actividad actividadSeleccionada = actividades.get(position);
+        intent.putExtra("actividad_id", actividadSeleccionada.getId());
+        startActivity(intent);
     }
 }

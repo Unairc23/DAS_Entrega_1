@@ -28,32 +28,47 @@ public class miDB extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void addNombre(String nombre) {
+    public long addNombre(String nombre) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("Nombre", nombre);
-        db.insert("Actividades", null, values);
+        long id = db.insert("Actividades", null, values);
         db.close();
+        return id;
     }
 
-    public ArrayList<String> getNombres() {
-        ArrayList<String> listaNombres = new ArrayList<>();
+    public ArrayList<Actividad> getActividades() {
+        ArrayList<Actividad> listaActividades = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT Nombre FROM Actividades", null);
+        Cursor cursor = db.rawQuery("SELECT Codigo, Nombre FROM Actividades", null);
         if (cursor.moveToFirst()) {
             do {
-                listaNombres.add(cursor.getString(0));
+                long id = cursor.getLong(0);
+                String nombre = cursor.getString(1);
+                listaActividades.add(new Actividad(id, nombre));
             } while (cursor.moveToNext());
         }
         cursor.close();
         db.close();
-        return listaNombres;
+        return listaActividades;
     }
 
-    public void deleteNombre(String nombre) {
+    public Actividad getActividadPorId(long id) {
+        Actividad actividad = null;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT Codigo, Nombre FROM Actividades WHERE Codigo = " + id, null);
+        if (cursor.moveToFirst()) {
+            String nombre = cursor.getString(1);
+            actividad = new Actividad(id, nombre);
+        }
+        cursor.close();
+        db.close();
+        return actividad;
+    }
+
+    public void deleteActividadPorId(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String[] args = {nombre};
-        db.delete("Actividades", "Nombre = ?", args);
+        db.delete("Actividades", "Codigo=?", new String[]{String.valueOf(id)});
         db.close();
     }
 }
