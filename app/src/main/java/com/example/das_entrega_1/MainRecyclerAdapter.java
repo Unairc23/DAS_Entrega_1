@@ -7,15 +7,20 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MainRecyclerAdapter extends RecyclerView.Adapter<MainViewHolder> {
-    private String[] losnombres;
-    private int[] lasimagenes;
-    private static boolean[] seleccionados;
+import java.util.ArrayList;
 
-    public MainRecyclerAdapter(String[] nombres, int[] imagenes) {
+public class MainRecyclerAdapter extends RecyclerView.Adapter<MainViewHolder> {
+    private ArrayList<String> losnombres;
+    private ArrayList<Integer> lasimagenes;
+    private static ArrayList<Boolean> seleccionados;
+
+    public MainRecyclerAdapter(ArrayList<String> nombres, ArrayList<Integer> imagenes) {
         losnombres = nombres;
         lasimagenes = imagenes;
-        seleccionados = new boolean[nombres.length];
+        seleccionados  = new ArrayList<Boolean>();
+        for (int i = 0; i < losnombres.size(); i++){
+            seleccionados.add(false);
+        }
     }
 
     public MainViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -27,11 +32,18 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MainViewHolder holder, int position) {
-        holder.eltexto.setText(losnombres[position]);
-        holder.laimagen.setImageResource(lasimagenes[position]);
+        holder.eltexto.setText(losnombres.get(position));
+        holder.laimagen.setImageResource(lasimagenes.get(position));
     }
     @Override
     public int getItemCount() {
-        return losnombres.length;
+        return losnombres.size();
+    }
+
+    public void addItem(String nombre, int imagen) {
+        losnombres.add(nombre);
+        lasimagenes.add(imagen);
+        seleccionados.add(false);
+        notifyItemInserted(losnombres.size() - 1);
     }
 }

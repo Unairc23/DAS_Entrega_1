@@ -8,10 +8,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+
 public class MainViewHolder extends RecyclerView.ViewHolder {
     public TextView eltexto;
     public ImageView laimagen;
-    public boolean[] seleccion;
+    public ArrayList<Boolean> seleccion;
 
     public MainViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -21,15 +23,14 @@ public class MainViewHolder extends RecyclerView.ViewHolder {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (seleccion[getAdapterPosition()] == true) {
-                    seleccion[getAdapterPosition()] = false;
+                if (seleccion.get(getAdapterPosition()) == true) {
+                    seleccion.set(getAdapterPosition(), false);
                     laimagen.setColorFilter(null);
                 } else {
-                    seleccion[getAdapterPosition()] = true;
+                    seleccion.set(getAdapterPosition(), true);
                     laimagen.setColorFilter(Color.BLACK);
                 }
             }
         });
-
     }
 }
