@@ -2,6 +2,7 @@ package com.example.das_entrega_1;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
@@ -42,11 +43,22 @@ public class MainActivity extends AppCompatActivity {
                         result -> {
                             if (result.getResultCode() == RESULT_OK) {
                                 if (result.getData() != null) {
-                                    String nombre = result.getData().getStringExtra("nombre");
-                                    if (nombre != null && !nombre.isEmpty()) {
-                                        long id = gestorDB.addNombre(nombre);
-                                        Actividad nuevaActividad = new Actividad(id, nombre);
-                                        eladaptador.addItem(nuevaActividad, R.drawable.togetchi1);
+                                    boolean borrar = result.getData().getBooleanExtra("borrar", false);
+                                    if (!borrar){
+                                        String nombre = result.getData().getStringExtra("nombre");
+                                        if (nombre != null && !nombre.isEmpty()) {
+                                            long id = gestorDB.addNombre(nombre);
+                                            Actividad nuevaActividad = new Actividad(id, nombre);
+                                            eladaptador.addItem(nuevaActividad, R.drawable.togetchi1);
+                                        }
+                                    }
+                                    else{
+                                        long id = result.getData().getLongExtra("actividad_id", -1);
+                                        for (int i = 0; i < actividades.size(); i++) {
+                                            if (actividades.get(i).getId() == id) {
+                                                eliminarElemento(i);
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -79,6 +91,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DetallesActivity.class);
         Actividad actividadSeleccionada = actividades.get(position);
         intent.putExtra("actividad_id", actividadSeleccionada.getId());
-        startActivity(intent);
+        startActivityIntent.launch(intent);
     }
 }

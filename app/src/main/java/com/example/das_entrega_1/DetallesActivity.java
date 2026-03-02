@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class DetallesActivity extends AppCompatActivity {
 
     private miDB gestorDB;
+    private long actividadId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +32,14 @@ public class DetallesActivity extends AppCompatActivity {
         Button dButton = findViewById(R.id.dAceptarButton);
         dButton.setOnClickListener(view -> Volver());
 
+        // Añadimos el listener para el botón de borrar
+        Button borrarButton = findViewById(R.id.dBorrarButon);
+        borrarButton.setOnClickListener(view -> Borrar());
+
         TextView dTexto = findViewById(R.id.dTexto);
 
         Intent intent = getIntent();
-        long actividadId = intent.getLongExtra("actividad_id", -1);
+        actividadId = intent.getLongExtra("actividad_id", -1);
 
         if (actividadId != -1) {
             Actividad actividad = gestorDB.getActividadPorId(actividadId);
@@ -46,6 +51,14 @@ public class DetallesActivity extends AppCompatActivity {
 
     public void Volver(){
         Intent intent = new Intent();
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    public void Borrar(){
+        Intent intent = new Intent();
+        intent.putExtra("borrar", true);
+        intent.putExtra("actividad_id", actividadId);
         setResult(RESULT_OK, intent);
         finish();
     }
