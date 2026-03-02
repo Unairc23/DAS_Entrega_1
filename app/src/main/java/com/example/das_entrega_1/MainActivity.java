@@ -2,12 +2,15 @@ package com.example.das_entrega_1;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -35,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        setSupportActionBar(findViewById(R.id.toolbar));
 
         gestorDB = new miDB(this, "Actividades", null, 1);
 
@@ -76,6 +81,21 @@ public class MainActivity extends AppCompatActivity {
         Addbutton.setOnClickListener(view -> añadirActividad());
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_tool, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.opciones) {
+            abrirConfig();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void añadirActividad() {
         Intent intent = new Intent(this, AddActivity.class);
         startActivityIntent.launch(intent);
@@ -91,6 +111,11 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DetallesActivity.class);
         Actividad actividadSeleccionada = actividades.get(position);
         intent.putExtra("actividad_id", actividadSeleccionada.getId());
+        startActivityIntent.launch(intent);
+    }
+
+    public void abrirConfig(){
+        Intent intent = new Intent(this, ConfigActivity.class);
         startActivityIntent.launch(intent);
     }
 }
