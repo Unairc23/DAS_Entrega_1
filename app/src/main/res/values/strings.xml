@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">DAS_Entrega_1</string>
+    <string name="guardarSalir">Guardar y salir</string>
+    <string name="defaultName">Nombre</string>
+    <string name="addAceptar">Aceptar</string>
+    <string name="detallesAceptar">Aceptar</string>
+    <string name="detallesBorrar">Borrar</string>
+    <string name="dFotoDesc">Foto de la actividad</string>
+    <string name="mAñadir">Añadir Elemento</string>
+    <string name="seleccionarIdioma">Selecciona tu idioma</string>
+    <string name="idiomaEspañol">Español</string>
+    <string name="idiomaIngles">Inglés</string>
+    <string name="idiomaEuskera">Euskera</string>
+    <string name="seleccionarTema">Selecciona el tema</string>
+    <string name="temaClaro">Claro</string>
+    <string name="temaOscuro">Oscuro</string>
 </resources>

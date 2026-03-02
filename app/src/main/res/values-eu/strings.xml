@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">DAS_Entrega_1</string>
+    <string name="defaultName">Izena</string>
+    <string name="addAceptar">Onartu</string>
+    <string name="detallesAceptar">Onartu</string>
+    <string name="detallesBorrar">Ezabatu</string>
+    <string name="dFotoDesc">Jardueraren argazkia</string>
+    <string name="guardarSalir">Gorde eta irten</string>
+    <string name="seleccionarIdioma">Hautatu zure hizkuntza</string>
+    <string name="idiomaIngles">Ingelesa</string>
+    <string name="idiomaEuskera">Euskara</string>
+    <string name="idiomaEspañol">Gaztelania</string>
+    <string name="mAñadir">Gehitu jarduera</string>
+</resources>

@@ -1,5 +1,6 @@
 package com.example.das_entrega_1;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -16,6 +17,7 @@ public class AddActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LocaleHelper.onAttach(this);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_add);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -26,6 +28,11 @@ public class AddActivity extends AppCompatActivity {
 
         Button aButton = findViewById(R.id.Aceptarbutton);
         aButton.setOnClickListener(view -> Aceptar());
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase));
     }
 
     public void Aceptar(){

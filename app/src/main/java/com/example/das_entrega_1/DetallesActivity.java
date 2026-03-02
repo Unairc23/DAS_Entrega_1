@@ -1,5 +1,6 @@
 package com.example.das_entrega_1;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -19,6 +20,7 @@ public class DetallesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LocaleHelper.onAttach(this);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_detalles);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -47,6 +49,11 @@ public class DetallesActivity extends AppCompatActivity {
                 dTexto.setText(actividad.getNombre());
             }
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase));
     }
 
     public void Volver(){

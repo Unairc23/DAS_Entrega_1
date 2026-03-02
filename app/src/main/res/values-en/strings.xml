@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DAS_Entrega_1</string>
+    <string name="guardarSalir">Save and exit</string>
+    <string name="defaultName">Name</string>
+    <string name="addAceptar">Accept</string>
+    <string name="detallesAceptar">Accept</string>
+    <string name="detallesBorrar">Delete</string>
+    <string name="dFotoDesc">Photo of the activity</string>
+    <string name="mAñadir">Add activity</string>
+    <string name="seleccionarIdioma">Select your language</string>
+    <string name="idiomaEspañol">Spanish</string>
+    <string name="idiomaIngles">English</string>
+    <string name="idiomaEuskera">Basque</string>
+</resources>
