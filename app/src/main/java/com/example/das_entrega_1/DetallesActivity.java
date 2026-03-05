@@ -67,6 +67,11 @@ public class DetallesActivity extends AppCompatActivity {
     }
 
     public void Borrar(){
+        BorrarFragment dialog = new BorrarFragment();
+        dialog.show(getSupportFragmentManager(), "BorrarDialog");
+    }
+
+    public void confirmarBorrado() {
         Intent intent = new Intent();
         intent.putExtra("borrar", true);
         intent.putExtra("actividad_id", actividadId);
