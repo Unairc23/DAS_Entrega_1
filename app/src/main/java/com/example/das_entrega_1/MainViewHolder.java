@@ -7,13 +7,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.osmdroid.views.MapView;
+
 import java.util.ArrayList;
 
 public class MainViewHolder extends RecyclerView.ViewHolder {
     public TextView eltexto;
-    public ImageView laimagen;
-    public ArrayList<Boolean> seleccion;
-
+    public MapView elmapa;
     public interface OnItemClickListener {
         void onItemClicked(int position);
     }
@@ -25,7 +25,7 @@ public class MainViewHolder extends RecyclerView.ViewHolder {
     public MainViewHolder(@NonNull View itemView, final OnItemClickListener clickListener, final OnItemLongClickListener longClickListener) {
         super(itemView);
         eltexto = itemView.findViewById(R.id.txtItem);
-        laimagen = itemView.findViewById(R.id.imgItem);
+        elmapa = itemView.findViewById(R.id.mapItem);
 
         itemView.setOnClickListener(v -> {
             if (clickListener != null) {

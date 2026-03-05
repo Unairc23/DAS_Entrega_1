@@ -19,7 +19,9 @@ public class miDB extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("CREATE TABLE Actividades (" +
                 "'Codigo' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-                "'Nombre' VARCHAR(255))");
+                "'Nombre' VARCHAR(255), " +
+                "'Latitud' REAL, " +
+                "'Longitud' REAL)");
     }
 
     @Override
@@ -28,10 +30,12 @@ public class miDB extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long addNombre(String nombre) {
+    public long addActividad(String nombre, double latitud, double longitud) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("Nombre", nombre);
+        values.put("Latitud", latitud);
+        values.put("Longitud", longitud);
         long id = db.insert("Actividades", null, values);
         db.close();
         return id;
@@ -40,12 +44,14 @@ public class miDB extends SQLiteOpenHelper {
     public ArrayList<Actividad> getActividades() {
         ArrayList<Actividad> listaActividades = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT Codigo, Nombre FROM Actividades", null);
+        Cursor cursor = db.rawQuery("SELECT Codigo, Nombre, Latitud, Longitud FROM Actividades", null);
         if (cursor.moveToFirst()) {
             do {
                 long id = cursor.getLong(0);
                 String nombre = cursor.getString(1);
-                listaActividades.add(new Actividad(id, nombre));
+                double latitud = cursor.getDouble(2);
+                double longitud = cursor.getDouble(3);
+                listaActividades.add(new Actividad(id, nombre, latitud, longitud));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -56,10 +62,12 @@ public class miDB extends SQLiteOpenHelper {
     public Actividad getActividadPorId(long id) {
         Actividad actividad = null;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT Codigo, Nombre FROM Actividades WHERE Codigo = " + id, null);
+        Cursor cursor = db.rawQuery("SELECT Codigo, Nombre, Latitud, Longitud FROM Actividades WHERE Codigo = " + id, null);
         if (cursor.moveToFirst()) {
             String nombre = cursor.getString(1);
-            actividad = new Actividad(id, nombre);
+            double latitud = cursor.getDouble(2);
+            double longitud = cursor.getDouble(3);
+            actividad = new Actividad(id, nombre, latitud, longitud);
         }
         cursor.close();
         db.close();

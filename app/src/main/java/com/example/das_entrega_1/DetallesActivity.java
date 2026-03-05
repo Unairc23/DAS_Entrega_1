@@ -12,6 +12,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import org.osmdroid.views.MapView;
+
 public class DetallesActivity extends AppCompatActivity {
 
     private miDB gestorDB;
@@ -21,6 +23,7 @@ public class DetallesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LocaleHelper.onAttach(this);
+        MapaHelper.init(this);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_detalles);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -34,11 +37,11 @@ public class DetallesActivity extends AppCompatActivity {
         Button dButton = findViewById(R.id.dAceptarButton);
         dButton.setOnClickListener(view -> Volver());
 
-        // Añadimos el listener para el botón de borrar
         Button borrarButton = findViewById(R.id.dBorrarButon);
         borrarButton.setOnClickListener(view -> Borrar());
 
         TextView dTexto = findViewById(R.id.dTexto);
+        MapView map = findViewById(R.id.mapDetalle);
 
         Intent intent = getIntent();
         actividadId = intent.getLongExtra("actividad_id", -1);
@@ -47,6 +50,7 @@ public class DetallesActivity extends AppCompatActivity {
             Actividad actividad = gestorDB.getActividadPorId(actividadId);
             if (actividad != null) {
                 dTexto.setText(actividad.getNombre());
+                MapaHelper.basicConfig(map, actividad.getLat(), actividad.getLon(), 18.0, true);
             }
         }
     }

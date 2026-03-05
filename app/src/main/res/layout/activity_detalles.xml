@@ -7,8 +7,8 @@
     android:layout_height="match_parent"
     tools:context=".DetallesActivity">
 
-    <ImageView
-        android:id="@+id/dImagen"
+    <org.osmdroid.views.MapView
+        android:id="@+id/mapDetalle"
         android:layout_width="0dp"
         android:layout_height="343dp"
         android:contentDescription="@string/dFotoDesc"
@@ -16,8 +16,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.050000012"
-        app:srcCompat="@drawable/togetchi1" />
+        app:layout_constraintVertical_bias="0.050000012"/>
 
     <TextView
         android:id="@+id/dTexto"

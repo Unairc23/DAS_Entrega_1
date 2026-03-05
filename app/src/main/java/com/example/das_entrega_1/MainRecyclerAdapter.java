@@ -11,12 +11,10 @@ import java.util.ArrayList;
 
 public class MainRecyclerAdapter extends RecyclerView.Adapter<MainViewHolder> implements MainViewHolder.OnItemClickListener, MainViewHolder.OnItemLongClickListener {
     private ArrayList<Actividad> lasActividades;
-    private ArrayList<Integer> lasimagenes;
     private MainActivity mainActivity;
 
-    public MainRecyclerAdapter(ArrayList<Actividad> actividades, ArrayList<Integer> imagenes, MainActivity activity) {
+    public MainRecyclerAdapter(ArrayList<Actividad> actividades, MainActivity activity) {
         this.lasActividades = actividades;
-        this.lasimagenes = imagenes;
         this.mainActivity = activity;
     }
 
@@ -29,8 +27,13 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainViewHolder> im
 
     @Override
     public void onBindViewHolder(@NonNull MainViewHolder holder, int position) {
-        holder.eltexto.setText(lasActividades.get(position).getNombre());
-        holder.laimagen.setImageResource(lasimagenes.get(position));
+        Actividad actividad = lasActividades.get(position);
+        holder.eltexto.setText(actividad.getNombre());
+        
+        // Inicializar osmdroid para el item
+        MapaHelper.init(holder.itemView.getContext());
+        // Configurar el mapa del item (no interactivo para no molestar al scroll)
+        MapaHelper.basicConfig(holder.elmapa, actividad.getLat(), actividad.getLon(), 15.0, false);
     }
 
     @Override
@@ -52,16 +55,14 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainViewHolder> im
         }
     }
 
-    public void addItem(Actividad actividad, int imagen) {
+    public void addItem(Actividad actividad) {
         lasActividades.add(actividad);
-        lasimagenes.add(imagen);
         notifyItemInserted(lasActividades.size() - 1);
     }
 
     public void removeItem(int position) {
         if (position >= 0 && position < lasActividades.size()) {
             lasActividades.remove(position);
-            lasimagenes.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, lasActividades.size());
         }

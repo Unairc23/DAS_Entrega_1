@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LocaleHelper.onAttach(this);
+        MapaHelper.init(this);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -53,10 +54,12 @@ public class MainActivity extends AppCompatActivity {
                                     boolean borrar = result.getData().getBooleanExtra("borrar", false);
                                     if (!borrar){
                                         String nombre = result.getData().getStringExtra("nombre");
+                                        double latitud = result.getData().getDoubleExtra("latitud", 0.0);
+                                        double longitud = result.getData().getDoubleExtra("longitud", 0.0);
                                         if (nombre != null && !nombre.isEmpty()) {
-                                            long id = gestorDB.addNombre(nombre);
-                                            Actividad nuevaActividad = new Actividad(id, nombre);
-                                            eladaptador.addItem(nuevaActividad, R.drawable.togetchi1);
+                                            long id = gestorDB.addActividad(nombre, latitud, longitud);
+                                            Actividad nuevaActividad = new Actividad(id, nombre, latitud, longitud);
+                                            eladaptador.addItem(nuevaActividad);
                                         }
                                     }
                                     else{
@@ -73,9 +76,8 @@ public class MainActivity extends AppCompatActivity {
 
         RecyclerView lista = findViewById(R.id.mrv);
         actividades = gestorDB.getActividades();
-        ArrayList<Integer> personajes = new ArrayList<>(Collections.nCopies(actividades.size(), R.drawable.togetchi1));
 
-        eladaptador = new MainRecyclerAdapter(actividades, personajes, this);
+        eladaptador = new MainRecyclerAdapter(actividades, this);
         lista.setAdapter(eladaptador);
         lista.setLayoutManager(new LinearLayoutManager(this));
 

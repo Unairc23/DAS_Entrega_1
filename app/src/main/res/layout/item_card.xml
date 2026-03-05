@@ -14,12 +14,10 @@
         android:orientation="horizontal"
         android:padding="12dp">
 
-        <ImageView
-            android:id="@+id/imgItem"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:contentDescription="@string/dFotoDesc"
-            android:scaleType="centerCrop" />
+        <org.osmdroid.views.MapView
+            android:id="@+id/mapItem"
+            android:layout_width="80dp"
+            android:layout_height="80dp" />
 
         <TextView
             android:id="@+id/txtItem"
