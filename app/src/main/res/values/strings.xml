@@ -14,4 +14,11 @@
     <string name="seleccionarTema">Selecciona el tema</string>
     <string name="temaClaro">Claro</string>
     <string name="temaOscuro">Oscuro</string>
+    <string name="temaAzul">Azul</string>
+    <string name="temaRojo">Rojo</string>
+    <string name="addButton">Añadir actividad</string>
+    <string name="distancia_label">Distancia</string>
+    <string name="tiempo_label">Tiempo</string>
+    <string name="descripcion_hint">Descripción</string>
+    <string name="km_hint">km</string>
 </resources>

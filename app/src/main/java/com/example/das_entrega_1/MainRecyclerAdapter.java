@@ -1,5 +1,6 @@
 package com.example.das_entrega_1;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,14 +26,20 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainViewHolder> im
         return new MainViewHolder(elLayoutDeCadaItem, this, this);
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void onBindViewHolder(@NonNull MainViewHolder holder, int position) {
         Actividad actividad = lasActividades.get(position);
         holder.eltexto.setText(actividad.getNombre());
-        
-        // Inicializar osmdroid para el item
+        holder.ladistancia.setText(String.format("%.2f km", actividad.getDistancia()));
+
+        int horas = (int) (actividad.getDuracion() / 3600);
+        int minutos = (int) ((actividad.getDuracion() % 3600) / 60);
+        holder.eltiempo.setText(String.format("%02d:%02d", horas, minutos));
+        holder.ladescripcion.setText(actividad.getDescripcion());
+
         MapaHelper.init(holder.itemView.getContext());
-        // Configurar el mapa del item (no interactivo para no molestar al scroll)
+        // Inicializar el mapa pero sin que sea interactivo
         MapaHelper.basicConfig(holder.elmapa, actividad.getLat(), actividad.getLon(), 15.0, false);
     }
 

@@ -1,23 +1,33 @@
 package com.example.das_entrega_1;
 
+import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(ThemeHelper.getThemeStyle(this));
+        ThemeHelper.applySettings(this);
         super.onCreate(savedInstanceState);
         LocaleHelper.onAttach(this);
         MapaHelper.init(this);
@@ -53,20 +65,14 @@ public class MainActivity extends AppCompatActivity {
                                 if (result.getData() != null) {
                                     boolean borrar = result.getData().getBooleanExtra("borrar", false);
                                     if (!borrar){
-                                        String nombre = result.getData().getStringExtra("nombre");
-                                        double latitud = result.getData().getDoubleExtra("latitud", 0.0);
-                                        double longitud = result.getData().getDoubleExtra("longitud", 0.0);
-                                        if (nombre != null && !nombre.isEmpty()) {
-                                            long id = gestorDB.addActividad(nombre, latitud, longitud);
-                                            Actividad nuevaActividad = new Actividad(id, nombre, latitud, longitud);
-                                            eladaptador.addItem(nuevaActividad);
-                                        }
+                                        añadirActividad(result.getData());
                                     }
                                     else{
                                         long id = result.getData().getLongExtra("actividad_id", -1);
                                         for (int i = 0; i < actividades.size(); i++) {
                                             if (actividades.get(i).getId() == id) {
                                                 eliminarElemento(i);
+                                                break;
                                             }
                                         }
                                     }
@@ -81,8 +87,8 @@ public class MainActivity extends AppCompatActivity {
         lista.setAdapter(eladaptador);
         lista.setLayoutManager(new LinearLayoutManager(this));
 
-        Button Addbutton = findViewById(R.id.Addbutton);
-        Addbutton.setOnClickListener(view -> añadirActividad());
+        FloatingActionButton Addbutton = findViewById(R.id.Addbutton);
+        Addbutton.setOnClickListener(view -> llamarAñadirActividad());
     }
 
     @Override
@@ -105,9 +111,53 @@ public class MainActivity extends AppCompatActivity {
         super.attachBaseContext(LocaleHelper.onAttach(newBase));
     }
 
-    public void añadirActividad() {
+    public void llamarAñadirActividad() {
         Intent intent = new Intent(this, AddActivity.class);
         startActivityIntent.launch(intent);
+    }
+
+    public void añadirActividad(Intent data){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 11);
+            }
+        }
+
+        String nombre = data.getStringExtra("nombre");
+        String descripcion = data.getStringExtra("descripcion");
+        double latitud = data.getDoubleExtra("latitud", 0.0);
+        double longitud = data.getDoubleExtra("longitud", 0.0);
+        double distancia = data.getDoubleExtra("distancia", 0.0);
+        double duracion = data.getIntExtra("duracion", 0);
+        if (nombre != null && !nombre.isEmpty()) {
+            long id = gestorDB.addActividad(nombre, latitud, longitud, descripcion, distancia, duracion);
+            notificar();
+            Actividad nuevaActividad = new Actividad(id, nombre, latitud, longitud, distancia, duracion, descripcion, null);
+            eladaptador.addItem(nuevaActividad);
+        }
+    }
+
+    public void notificar(){
+        NotificationManager elManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        String idCanal = "IdCanal";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel elCanal = new NotificationChannel(idCanal, "NombreCanal", NotificationManager.IMPORTANCE_DEFAULT);
+            elCanal.setDescription("Descripción del canal");
+            elCanal.enableLights(true);
+            elCanal.setLightColor(Color.RED);
+            elManager.createNotificationChannel(elCanal);
+        }
+
+        NotificationCompat.Builder elBuilder = new NotificationCompat.Builder(this, idCanal)
+                .setSmallIcon(android.R.drawable.stat_sys_warning)
+                .setContentTitle("Actividad Añadida")
+                .setContentText("Se ha guardado una nueva actividad correctamente.")
+                .setSubText("Información extra")
+                .setVibrate(new long[]{0, 1000, 500, 1000})
+                .setAutoCancel(true);
+
+        elManager.notify(1, elBuilder.build());
     }
 
     public void eliminarElemento(int position) {
@@ -123,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
         startActivityIntent.launch(intent);
     }
 
-    public void abrirConfig(){
+    public void abrirConfig() {
         Intent intent = new Intent(this, ConfigActivity.class);
         startActivityIntent.launch(intent);
     }

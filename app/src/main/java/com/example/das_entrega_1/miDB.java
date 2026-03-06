@@ -8,7 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class miDB extends SQLiteOpenHelper {
     public miDB(@Nullable Context context, @Nullable String name,
@@ -21,7 +23,11 @@ public class miDB extends SQLiteOpenHelper {
                 "'Codigo' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 "'Nombre' VARCHAR(255), " +
                 "'Latitud' REAL, " +
-                "'Longitud' REAL)");
+                "'Longitud' REAL, " +
+                "'Descripcion' VARCHAR(255), " +
+                "'Fecha' DATE, " +
+                "'Distancia' REAL, " +
+                "'Duracion' REAL)");
     }
 
     @Override
@@ -30,12 +36,16 @@ public class miDB extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long addActividad(String nombre, double latitud, double longitud) {
+    public long addActividad(String nombre, double latitud, double longitud, String descripcion, double distancia, double duracion) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("Nombre", nombre);
         values.put("Latitud", latitud);
         values.put("Longitud", longitud);
+        values.put("Fecha", System.currentTimeMillis());
+        values.put("Descripcion", descripcion);
+        values.put("Distancia", distancia);
+        values.put("Duracion", duracion);
         long id = db.insert("Actividades", null, values);
         db.close();
         return id;
@@ -44,14 +54,18 @@ public class miDB extends SQLiteOpenHelper {
     public ArrayList<Actividad> getActividades() {
         ArrayList<Actividad> listaActividades = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT Codigo, Nombre, Latitud, Longitud FROM Actividades", null);
+        Cursor cursor = db.rawQuery("SELECT Codigo, Nombre, Latitud, Longitud, Descripcion, Fecha, Distancia, Duracion FROM Actividades", null);
         if (cursor.moveToFirst()) {
             do {
                 long id = cursor.getLong(0);
                 String nombre = cursor.getString(1);
                 double latitud = cursor.getDouble(2);
                 double longitud = cursor.getDouble(3);
-                listaActividades.add(new Actividad(id, nombre, latitud, longitud));
+                String descripcion = cursor.getString(4);
+                Date fecha = new Date(cursor.getLong(5));
+                double distancia = cursor.getDouble(6);
+                double duracion = cursor.getDouble(7);
+                listaActividades.add(new Actividad(id, nombre, latitud, longitud, distancia, duracion, descripcion, fecha));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -62,12 +76,16 @@ public class miDB extends SQLiteOpenHelper {
     public Actividad getActividadPorId(long id) {
         Actividad actividad = null;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT Codigo, Nombre, Latitud, Longitud FROM Actividades WHERE Codigo = " + id, null);
+        Cursor cursor = db.rawQuery("SELECT Codigo, Nombre, Latitud, Longitud, Descripcion, Fecha, Distancia, Duracion FROM Actividades WHERE Codigo = " + id, null);
         if (cursor.moveToFirst()) {
             String nombre = cursor.getString(1);
             double latitud = cursor.getDouble(2);
             double longitud = cursor.getDouble(3);
-            actividad = new Actividad(id, nombre, latitud, longitud);
+            String descripcion = cursor.getString(4);
+            Date fecha = new Date(cursor.getLong(5));
+            double distancia = cursor.getDouble(6);
+            double duracion = cursor.getDouble(7);
+            actividad = new Actividad(id, nombre, latitud, longitud, distancia, duracion, descripcion, fecha);
         }
         cursor.close();
         db.close();

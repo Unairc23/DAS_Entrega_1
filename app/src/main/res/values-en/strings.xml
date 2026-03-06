@@ -12,4 +12,10 @@
     <string name="idiomaEspañol">Spanish</string>
     <string name="idiomaIngles">English</string>
     <string name="idiomaEuskera">Basque</string>
+    <string name="seleccionarTema">Select theme</string>
+    <string name="temaClaro">Light</string>
+    <string name="temaOscuro">Dark</string>
+    <string name="temaAzul">Blue</string>
+    <string name="temaRojo">Red</string>
+    <string name="addButton">Add activity</string>
 </resources>

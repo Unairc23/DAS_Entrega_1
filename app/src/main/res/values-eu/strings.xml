@@ -11,4 +11,10 @@
     <string name="idiomaEuskera">Euskara</string>
     <string name="idiomaEspañol">Gaztelania</string>
     <string name="mAñadir">Gehitu jarduera</string>
+    <string name="seleccionarTema">Gaia aukeratu</string>
+    <string name="temaClaro">Argia</string>
+    <string name="temaOscuro">Iluna</string>
+    <string name="temaAzul">Urdina</string>
+    <string name="temaRojo">Gorria</string>
+    <string name="addButton">Aktibitatea gehitu</string>
 </resources>

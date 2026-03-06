@@ -21,6 +21,8 @@ public class DetallesActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(ThemeHelper.getThemeStyle(this));
+        ThemeHelper.applySettings(this);
         super.onCreate(savedInstanceState);
         LocaleHelper.onAttach(this);
         MapaHelper.init(this);

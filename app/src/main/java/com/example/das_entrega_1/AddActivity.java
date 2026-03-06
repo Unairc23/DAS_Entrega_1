@@ -32,6 +32,8 @@ public class AddActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(ThemeHelper.getThemeStyle(this));
+        ThemeHelper.applySettings(this);
         super.onCreate(savedInstanceState);
         MapaHelper.init(this);
         LocaleHelper.onAttach(this);
@@ -52,7 +54,6 @@ public class AddActivity extends AppCompatActivity {
 
         // Cargar mapa y esperar a recibir ubicacion para actualizarlo
         map = findViewById(R.id.map);
-        map.getOverlays().add(mLocationOverlay);
         mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this), map);
         mLocationOverlay.enableMyLocation();
 
@@ -67,6 +68,26 @@ public class AddActivity extends AppCompatActivity {
 
         Button aButton = findViewById(R.id.Aceptarbutton);
         aButton.setOnClickListener(view -> Aceptar());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (map != null) map.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (map != null) map.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (map != null) {
+            map.onDetach(); // Evita el NullPointerException en los Overlays de osmdroid
+        }
     }
 
     @Override
@@ -104,9 +125,45 @@ public class AddActivity extends AppCompatActivity {
 
     public void Aceptar(){
         EditText nombreInput = findViewById(R.id.nombreInput);
-        String valor = nombreInput.getText().toString();
+        EditText kmInput = findViewById(R.id.kmInput);
+        EditText horasInput = findViewById(R.id.horasInput);
+        EditText minutosInput = findViewById(R.id.minutosInput);
+        EditText descripcionInput = findViewById(R.id.descripcionInput);
+
+        String valorNombre = nombreInput.getText().toString();
+        String valorKm = kmInput.getText().toString();
+        String valorHoras = horasInput.getText().toString();
+        String valorMinutos = minutosInput.getText().toString();
+        String valorDescripcion = descripcionInput.getText().toString();
+
+        double km = 0.0;
+        try {
+            km = Double.parseDouble(valorKm);
+        } catch (NumberFormatException e) {
+            km = 0.0;
+        }
+
+        int horas = 0;
+        try {
+            horas = Integer.parseInt(valorHoras);
+        } catch (NumberFormatException e) {
+            horas = 0;
+        }
+
+        int minutos = 0;
+        try {
+            minutos = Integer.parseInt(valorMinutos);
+        } catch (NumberFormatException e) {
+            minutos = 0;
+        }
+
+        long duracionSeg = (horas * 3600L + minutos * 60L);
+
         Intent intent = new Intent();
-        intent.putExtra("nombre", valor);
+        intent.putExtra("nombre", valorNombre);
+        intent.putExtra("distancia", km);
+        intent.putExtra("duracion", duracionSeg);
+        intent.putExtra("descripcion", valorDescripcion);
 
         if (mLocationOverlay != null) {
             GeoPoint myLocation = mLocationOverlay.getMyLocation();

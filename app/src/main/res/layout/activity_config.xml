@@ -24,7 +24,7 @@
         android:id="@+id/radioGroupIdioma"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewIdioma">
@@ -52,7 +52,7 @@
         android:id="@+id/textViewTema"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:text="@string/seleccionarTema"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -64,7 +64,7 @@
         android:id="@+id/radioGroupTema"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewTema">
@@ -80,6 +80,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/temaOscuro" />
+
+        <RadioButton
+            android:id="@+id/radioButtonAzul"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Azul" />
+
+        <RadioButton
+            android:id="@+id/radioButtonRojo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Rojo" />
     </RadioGroup>
 
     <Button
