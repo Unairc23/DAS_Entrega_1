@@ -51,6 +51,19 @@ public class miDB extends SQLiteOpenHelper {
         return id;
     }
 
+    public void updateActividad(long id, String nombre, double latitud, double longitud, String descripcion, double distancia, double duracion) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("Nombre", nombre);
+        values.put("Latitud", latitud);
+        values.put("Longitud", longitud);
+        values.put("Descripcion", descripcion);
+        values.put("Distancia", distancia);
+        values.put("Duracion", duracion);
+        db.update("Actividades", values, "Codigo=?", new String[]{String.valueOf(id)});
+        db.close();
+    }
+
     public ArrayList<Actividad> getActividades() {
         ArrayList<Actividad> listaActividades = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();

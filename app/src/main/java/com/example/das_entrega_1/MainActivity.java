@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -30,7 +29,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,7 +63,12 @@ public class MainActivity extends AppCompatActivity {
                                 if (result.getData() != null) {
                                     boolean borrar = result.getData().getBooleanExtra("borrar", false);
                                     if (!borrar){
-                                        añadirActividad(result.getData());
+                                        if (result.getData().hasExtra("actividad_id")) {
+                                            long id = result.getData().getLongExtra("actividad_id", -1);
+                                            actualizarActividad(id, result.getData());
+                                        } else {
+                                            añadirActividad(result.getData());
+                                        }
                                     }
                                     else{
                                         long id = result.getData().getLongExtra("actividad_id", -1);
@@ -112,8 +115,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void llamarAñadirActividad() {
-        Intent intent = new Intent(this, AddActivity.class);
+        Intent intent = new Intent(this, DetallesActivity.class);
         startActivityIntent.launch(intent);
+    }
+
+    private void actualizarActividad(long id, Intent data) {
+        String nombre = data.getStringExtra("nombre");
+        String descripcion = data.getStringExtra("descripcion");
+        double latitud = data.getDoubleExtra("latitud", 0.0);
+        double longitud = data.getDoubleExtra("longitud", 0.0);
+        double distancia = data.getDoubleExtra("distancia", 0.0);
+        long duracion = data.getLongExtra("duracion", 0);
+
+        gestorDB.updateActividad(id, nombre, latitud, longitud, descripcion, distancia, (double) duracion);
+
+        for (int i = 0; i < actividades.size(); i++) {
+            if (actividades.get(i).getId() == id) {
+                actividades.get(i).update(nombre, latitud, longitud, distancia, (double) duracion, descripcion);
+                eladaptador.notifyItemChanged(i);
+                break;
+            }
+        }
     }
 
     public void añadirActividad(Intent data){
@@ -128,11 +150,11 @@ public class MainActivity extends AppCompatActivity {
         double latitud = data.getDoubleExtra("latitud", 0.0);
         double longitud = data.getDoubleExtra("longitud", 0.0);
         double distancia = data.getDoubleExtra("distancia", 0.0);
-        double duracion = data.getIntExtra("duracion", 0);
+        long duracion = data.getLongExtra("duracion", 0);
         if (nombre != null && !nombre.isEmpty()) {
-            long id = gestorDB.addActividad(nombre, latitud, longitud, descripcion, distancia, duracion);
+            long id = gestorDB.addActividad(nombre, latitud, longitud, descripcion, distancia, (double) duracion);
             notificar();
-            Actividad nuevaActividad = new Actividad(id, nombre, latitud, longitud, distancia, duracion, descripcion, null);
+            Actividad nuevaActividad = new Actividad(id, nombre, latitud, longitud, distancia, (double) duracion, descripcion, null);
             eladaptador.addItem(nuevaActividad);
         }
     }
@@ -151,9 +173,8 @@ public class MainActivity extends AppCompatActivity {
 
         NotificationCompat.Builder elBuilder = new NotificationCompat.Builder(this, idCanal)
                 .setSmallIcon(android.R.drawable.stat_sys_warning)
-                .setContentTitle("Actividad Añadida")
-                .setContentText("Se ha guardado una nueva actividad correctamente.")
-                .setSubText("Información extra")
+                .setContentTitle(getString(R.string.notificacionAñadida))
+                .setContentText(getString(R.string.notificacionDesc))
                 .setVibrate(new long[]{0, 1000, 500, 1000})
                 .setAutoCancel(true);
 

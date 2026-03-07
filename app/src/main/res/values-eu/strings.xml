@@ -17,4 +17,13 @@
     <string name="temaAzul">Urdina</string>
     <string name="temaRojo">Gorria</string>
     <string name="addButton">Aktibitatea gehitu</string>
+    <string name="distancia_label">Distantzia</string>
+    <string name="tiempo_label">Denbora</string>
+    <string name="descripcion_hint">Deskribapena</string>
+    <string name="km_hint">km</string>
+    <string name="notificacionAñadida">Aktibitatea gehituta</string>
+    <string name="notificacionDesc">Aktibitate berri bat gehitu da</string>
+    <string name="cancelar">Utzi</string>
+    <string name="crear">Sortu</string>
+    <string name="borrar">Ezabatu</string>
 </resources>

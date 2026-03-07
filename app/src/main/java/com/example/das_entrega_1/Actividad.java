@@ -1,6 +1,5 @@
 package com.example.das_entrega_1;
 
-import java.sql.Time;
 import java.util.Date;
 
 public class Actividad {
@@ -25,7 +24,6 @@ public class Actividad {
             this.fecha = fecha;
         } else {
             this.fecha = new Date();
-            fecha.setTime(System.currentTimeMillis());
         }
     }
 

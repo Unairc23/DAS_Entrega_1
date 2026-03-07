@@ -21,4 +21,9 @@
     <string name="tiempo_label">Tiempo</string>
     <string name="descripcion_hint">Descripción</string>
     <string name="km_hint">km</string>
+    <string name="notificacionAñadida">Actividad añadida</string>
+    <string name="notificacionDesc">Se ha añadido una nueva actividad</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="crear">Crear</string>
+    <string name="borrar">Borrar"</string>
 </resources>

@@ -18,4 +18,13 @@
     <string name="temaAzul">Blue</string>
     <string name="temaRojo">Red</string>
     <string name="addButton">Add activity</string>
+    <string name="distancia_label">Distance</string>
+    <string name="tiempo_label">Time</string>
+    <string name="descripcion_hint">Description</string>
+    <string name="km_hint">km</string>
+    <string name="notificacionAñadida">Activity added</string>
+    <string name="notificacionDesc">A new activity has been added</string>
+    <string name="cancelar">Cancell</string>
+    <string name="crear">Create</string>
+    <string name="borrar">Delete</string>
 </resources>
