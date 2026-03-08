@@ -20,7 +20,7 @@ public class miDB extends SQLiteOpenHelper {
 
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("CREATE TABLE Actividades (" +
-                "'Codigo' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "'Id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 "'Nombre' VARCHAR(255), " +
                 "'Latitud' REAL, " +
                 "'Longitud' REAL, " +
@@ -60,14 +60,14 @@ public class miDB extends SQLiteOpenHelper {
         values.put("Descripcion", descripcion);
         values.put("Distancia", distancia);
         values.put("Duracion", duracion);
-        db.update("Actividades", values, "Codigo=?", new String[]{String.valueOf(id)});
+        db.update("Actividades", values, "Id=?", new String[]{String.valueOf(id)});
         db.close();
     }
 
     public ArrayList<Actividad> getActividades() {
         ArrayList<Actividad> listaActividades = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT Codigo, Nombre, Latitud, Longitud, Descripcion, Fecha, Distancia, Duracion FROM Actividades", null);
+        Cursor cursor = db.rawQuery("SELECT Id, Nombre, Latitud, Longitud, Descripcion, Fecha, Distancia, Duracion FROM Actividades", null);
         if (cursor.moveToFirst()) {
             do {
                 long id = cursor.getLong(0);
@@ -89,7 +89,7 @@ public class miDB extends SQLiteOpenHelper {
     public Actividad getActividadPorId(long id) {
         Actividad actividad = null;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT Codigo, Nombre, Latitud, Longitud, Descripcion, Fecha, Distancia, Duracion FROM Actividades WHERE Codigo = " + id, null);
+        Cursor cursor = db.rawQuery("SELECT Id, Nombre, Latitud, Longitud, Descripcion, Fecha, Distancia, Duracion FROM Actividades WHERE Id = " + id, null);
         if (cursor.moveToFirst()) {
             String nombre = cursor.getString(1);
             double latitud = cursor.getDouble(2);
@@ -107,7 +107,7 @@ public class miDB extends SQLiteOpenHelper {
 
     public void deleteActividadPorId(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete("Actividades", "Codigo=?", new String[]{String.valueOf(id)});
+        db.delete("Actividades", "Id=?", new String[]{String.valueOf(id)});
         db.close();
     }
 }

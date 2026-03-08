@@ -25,14 +25,15 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import java.util.ArrayList;
 
 public class DetallesActivity extends AppCompatActivity {
+    private static final double BILBAO_LAT = 43.2630;
+    private static final double BILBAO_LON = -2.9350;
 
-    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map;
     private MyLocationNewOverlay mLocationOverlay;
     private miDB gestorDB;
     private long actividadId = -1;
-    private double latOriginal = 0.0;
-    private double lonOriginal = 0.0;
+    private double latOriginal;
+    private double lonOriginal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +60,7 @@ public class DetallesActivity extends AppCompatActivity {
         map = findViewById(R.id.map);
         Button bButton = findViewById(R.id.BorrarButton);
         Button aButton = findViewById(R.id.Aceptarbutton);
-        
+
         // Comprobar si estamos editando
         Intent intent = getIntent();
         actividadId = intent.getLongExtra("actividad_id", -1);
@@ -96,21 +97,33 @@ public class DetallesActivity extends AppCompatActivity {
             }
         }
         else{ // Logica para añadir una actividad nueva
-
             bButton.setText(R.string.cancelar);
             aButton.setText(R.string.crear);
 
-            // Cargar mapa y esperar a recibir ubicacion para actualizarlo
+            // Los botones funcionan desde el principio pero se usa una lat/lon por defecto
+            aButton.setOnClickListener(view -> Aceptar());
+            bButton.setOnClickListener(view -> Volver());
+            latOriginal = BILBAO_LAT;
+            lonOriginal = BILBAO_LON;
+
+            MapaHelper.basicConfig(map, latOriginal, lonOriginal, 15.0, true);
+
             mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this), map);
-            mLocationOverlay.enableMyLocation();
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                mLocationOverlay.enableMyLocation();
+            }
 
             mLocationOverlay.runOnFirstFix(() -> {
                 runOnUiThread(() -> {
-                    GeoPoint myLocation = mLocationOverlay.getMyLocation();
-                    if (myLocation != null) {
-                        MapaHelper.basicConfig(map, myLocation.getLatitude(), myLocation.getLongitude(), 18.0, true);
-                        aButton.setOnClickListener(view -> Aceptar()); // Esperar a que exista una ubicacion para no devolver null
-                        bButton.setOnClickListener(view -> Volver());
+                    // Hay veces que se runea esta parte cuando la pantalla se ha cerrado este if evita el error
+                    if (!isFinishing() && map != null) {
+                        GeoPoint myLocation = mLocationOverlay.getMyLocation();
+                        if (myLocation != null) {
+                            latOriginal = myLocation.getLatitude();
+                            lonOriginal = myLocation.getLongitude();
+                            MapaHelper.basicConfig(map, latOriginal, lonOriginal, 18.0, true);
+                        }
                     }
                 });
             });
@@ -154,17 +167,22 @@ public class DetallesActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(
                     this,
                     permissionsToRequest.toArray(new String[0]),
-                    REQUEST_PERMISSIONS_REQUEST_CODE);
+                    1);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+        if (requestCode == 1) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (mLocationOverlay != null) {
                     mLocationOverlay.enableMyLocation();
+                }
+            } else {
+                // Si deniegan los permisos y es una actividad nueva se usan las lat/lon de bilbao
+                if (actividadId == -1) {
+                    MapaHelper.basicConfig(map, BILBAO_LAT, BILBAO_LON, 15.0, true);
                 }
             }
         }
@@ -222,7 +240,7 @@ public class DetallesActivity extends AppCompatActivity {
                 currentLon = myLocation.getLongitude();
             }
         }
-        
+
         intent.putExtra("latitud", currentLat);
         intent.putExtra("longitud", currentLon);
 

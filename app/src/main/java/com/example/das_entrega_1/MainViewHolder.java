@@ -19,11 +19,7 @@ public class MainViewHolder extends RecyclerView.ViewHolder {
         void onItemClicked(int position);
     }
 
-    public interface OnItemLongClickListener {
-        void onItemLongClicked(int position);
-    }
-
-    public MainViewHolder(@NonNull View itemView, final OnItemClickListener clickListener, final OnItemLongClickListener longClickListener) {
+    public MainViewHolder(@NonNull View itemView, final OnItemClickListener clickListener) {
         super(itemView);
         eltexto = itemView.findViewById(R.id.txtItem);
         elmapa = itemView.findViewById(R.id.mapItem);
@@ -38,17 +34,6 @@ public class MainViewHolder extends RecyclerView.ViewHolder {
                     clickListener.onItemClicked(position);
                 }
             }
-        });
-
-        itemView.setOnLongClickListener(v -> {
-            if (longClickListener != null) {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION) {
-                    longClickListener.onItemLongClicked(position);
-                    return true;
-                }
-            }
-            return false;
         });
     }
 }

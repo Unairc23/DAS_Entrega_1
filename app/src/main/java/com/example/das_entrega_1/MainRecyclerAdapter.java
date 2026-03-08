@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class MainRecyclerAdapter extends RecyclerView.Adapter<MainViewHolder> implements MainViewHolder.OnItemClickListener, MainViewHolder.OnItemLongClickListener {
+public class MainRecyclerAdapter extends RecyclerView.Adapter<MainViewHolder> implements MainViewHolder.OnItemClickListener{
     private ArrayList<Actividad> lasActividades;
     private MainActivity mainActivity;
 
@@ -23,7 +23,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainViewHolder> im
     @Override
     public MainViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View elLayoutDeCadaItem= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card, parent, false);
-        return new MainViewHolder(elLayoutDeCadaItem, this, this);
+        return new MainViewHolder(elLayoutDeCadaItem, this);
     }
 
     @SuppressLint("DefaultLocale")
@@ -52,13 +52,6 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainViewHolder> im
     public void onItemClicked(int position) {
         if (mainActivity != null) {
             mainActivity.abrirDetalles(position);
-        }
-    }
-
-    @Override
-    public void onItemLongClicked(int position) {
-        if (mainActivity != null) {
-            mainActivity.eliminarElemento(position);
         }
     }
 

@@ -61,7 +61,7 @@ public class ConfigActivity extends AppCompatActivity {
         String currentColor = ThemeHelper.getColor(this);
         currentMode = ThemeHelper.getMode(this);
 
-        updateDarkModeIcon(btnToggleDarkMode);
+        cambiarIcono(btnToggleDarkMode);
 
         if ("azul".equals(currentColor)) {
             ((RadioButton)findViewById(R.id.radioButtonAzul)).setChecked(true);
@@ -75,11 +75,11 @@ public class ConfigActivity extends AppCompatActivity {
 
         btnToggleDarkMode.setOnClickListener(v -> {
             currentMode = "oscuro".equals(currentMode) ? "claro" : "oscuro";
-            saveAllSettings();
+            guardarCambios();
         });
 
         btnGuardar.setOnClickListener(v -> {
-            saveAllSettings();
+            guardarCambios();
             // Volver a la pantalla principal
             Intent i = new Intent(ConfigActivity.this, MainActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -88,7 +88,7 @@ public class ConfigActivity extends AppCompatActivity {
         });
     }
 
-    private void saveAllSettings() {
+    private void guardarCambios() {
         // Obtener idioma seleccionado
         int selectedIdiomaId = radioGroupIdioma.getCheckedRadioButtonId();
         String newLang = "es";
@@ -106,7 +106,7 @@ public class ConfigActivity extends AppCompatActivity {
         ThemeHelper.setSettings(this, newColor, currentMode);
     }
 
-    private void updateDarkModeIcon(MaterialButton btn) {
+    private void cambiarIcono(MaterialButton btn) {
         if ("oscuro".equals(currentMode)) {
             btn.setIconResource(R.drawable.ic_sun); // Icono de sol para volver a claro
             btn.setIconTint(ColorStateList.valueOf(Color.parseColor("#FFD700")));

@@ -17,6 +17,9 @@ public class MapaHelper {
 
     // Configurar el mapa para poder interactuar con el, centrarse en la ubi del movil etc.
     public static void basicConfig(MapView map, double lat, double lon, double zoom, boolean interactive) {
+        if (map == null) {
+            return;
+        }
         map.setMultiTouchControls(interactive);
         IMapController mapController = map.getController();
         mapController.setZoom(zoom);
