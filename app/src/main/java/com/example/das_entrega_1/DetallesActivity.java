@@ -99,7 +99,6 @@ public class DetallesActivity extends AppCompatActivity {
 
             bButton.setText(R.string.cancelar);
             aButton.setText(R.string.crear);
-            bButton.setOnClickListener(view -> Volver());
 
             // Cargar mapa y esperar a recibir ubicacion para actualizarlo
             mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this), map);
@@ -111,6 +110,7 @@ public class DetallesActivity extends AppCompatActivity {
                     if (myLocation != null) {
                         MapaHelper.basicConfig(map, myLocation.getLatitude(), myLocation.getLongitude(), 18.0, true);
                         aButton.setOnClickListener(view -> Aceptar()); // Esperar a que exista una ubicacion para no devolver null
+                        bButton.setOnClickListener(view -> Volver());
                     }
                 });
             });

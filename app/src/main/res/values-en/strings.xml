@@ -27,4 +27,5 @@
     <string name="cancelar">Cancell</string>
     <string name="crear">Create</string>
     <string name="borrar">Delete</string>
+    <string name="opciones">Options</string>
 </resources>
