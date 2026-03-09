@@ -201,6 +201,11 @@ public class DetallesActivity extends AppCompatActivity {
         String valorMinutos = minutosInput.getText().toString();
         String valorDescripcion = descripcionInput.getText().toString();
 
+        if (valorNombre.isEmpty()) {
+            nombreInput.setError(getString(R.string.errorNombre));
+            return;
+        }
+
         double km = 0.0;
         try {
             km = Double.parseDouble(valorKm);

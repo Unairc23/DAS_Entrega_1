@@ -24,6 +24,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Vista transparente para capturar el clic encima del mapa -->
+        <View
+            android:id="@+id/mapClickOverlay"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@android:color/transparent"
+            app:layout_constraintTop_toTopOf="@id/mapItem"
+            app:layout_constraintBottom_toBottomOf="@id/mapItem"
+            app:layout_constraintStart_toStartOf="@id/mapItem"
+            app:layout_constraintEnd_toEndOf="@id/mapItem" />
+
         <TextView
             android:id="@+id/txtItem"
             android:layout_width="0dp"

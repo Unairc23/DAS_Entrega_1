@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -20,9 +19,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,13 +41,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         LocaleHelper.onAttach(this);
         MapaHelper.init(this);
-//        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -74,12 +64,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     else{
                                         long id = result.getData().getLongExtra("actividad_id", -1);
-                                        for (int i = 0; i < actividades.size(); i++) {
-                                            if (actividades.get(i).getId() == id) {
-                                                eliminarElemento(i);
-                                                break;
-                                            }
-                                        }
+                                        borrarActividad(id);
                                     }
                                 }
                             }
@@ -93,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         lista.setLayoutManager(new LinearLayoutManager(this));
 
         FloatingActionButton Addbutton = findViewById(R.id.Addbutton);
-        Addbutton.setOnClickListener(view -> llamarAñadirActividad());
+        Addbutton.setOnClickListener(view -> abrirDetalles(-1)); // -1 para indicar que la actividad no está en la lista y hay que crearla
     }
 
     @Override
@@ -114,11 +99,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(LocaleHelper.onAttach(newBase));
-    }
-
-    public void llamarAñadirActividad() {
-        Intent intent = new Intent(this, DetallesActivity.class);
-        startActivityIntent.launch(intent);
     }
 
     private void actualizarActividad(long id, Intent data) {
@@ -156,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         if (nombre != null && !nombre.isEmpty()) {
             long id = gestorDB.addActividad(nombre, latitud, longitud, descripcion, distancia, (double) duracion);
             notificar();
-            Actividad nuevaActividad = new Actividad(id, nombre, latitud, longitud, distancia, (double) duracion, descripcion, null);
+            Actividad nuevaActividad = new Actividad(id, nombre, latitud, longitud, distancia, (double) duracion, descripcion);
             eladaptador.addItem(nuevaActividad);
         }
     }
@@ -183,16 +163,22 @@ public class MainActivity extends AppCompatActivity {
         elManager.notify(1, elBuilder.build());
     }
 
-    public void eliminarElemento(int position) {
-        Actividad actividadAEliminar = actividades.get(position);
-        gestorDB.deleteActividadPorId(actividadAEliminar.getId());
-        eladaptador.removeItem(position);
+    public void borrarActividad(long id) {
+        gestorDB.deleteActividadPorId(id);
+        for (int i = 0; i < actividades.size(); i++) {
+            if (actividades.get(i).getId() == id) {
+                eladaptador.removeItem(i);
+                break;
+            }
+        }
     }
 
     public void abrirDetalles(int position) {
         Intent intent = new Intent(this, DetallesActivity.class);
-        Actividad actividadSeleccionada = actividades.get(position);
-        intent.putExtra("actividad_id", actividadSeleccionada.getId());
+        if (position != -1){
+            Actividad actividadSeleccionada = actividades.get(position);
+            intent.putExtra("actividad_id", actividadSeleccionada.getId());
+        }
         startActivityIntent.launch(intent);
     }
 

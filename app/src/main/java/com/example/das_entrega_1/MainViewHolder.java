@@ -14,6 +14,7 @@ public class MainViewHolder extends RecyclerView.ViewHolder {
     public TextView ladistancia;
     public TextView ladescripcion;
     public MapView elmapa;
+    public View elmapaClick; //El mapa consume los clics, poniendo una vista por encima esta peude detectar el click
 
     public interface OnItemClickListener {
         void onItemClicked(int position);
@@ -23,17 +24,23 @@ public class MainViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         eltexto = itemView.findViewById(R.id.txtItem);
         elmapa = itemView.findViewById(R.id.mapItem);
+        elmapaClick = itemView.findViewById(R.id.mapClickOverlay);
         eltiempo = itemView.findViewById(R.id.txtTiempoItem);
         ladistancia = itemView.findViewById(R.id.txtDistanciaItem);
         ladescripcion = itemView.findViewById(R.id.txtDescripcionItem);
 
-        itemView.setOnClickListener(v -> {
+        View.OnClickListener listener = v -> {
             if (clickListener != null) {
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
                     clickListener.onItemClicked(position);
                 }
             }
-        });
+        };
+
+        itemView.setOnClickListener(listener);
+        if (elmapaClick != null) {
+            elmapaClick.setOnClickListener(listener);
+        }
     }
 }
