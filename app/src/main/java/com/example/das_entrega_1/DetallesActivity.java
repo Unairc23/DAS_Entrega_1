@@ -37,11 +37,11 @@ public class DetallesActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(ThemeHelper.getThemeStyle(this));
-        ThemeHelper.applySettings(this);
+        setTheme(ThemeHelper.getThemeStyle(this)); // Aplicar colores
+        ThemeHelper.applySettings(this); // Aplicar modo
         super.onCreate(savedInstanceState);
-        MapaHelper.init(this);
-        LocaleHelper.onAttach(this);
+        MapaHelper.init(this); // Inicializar mapa
+        LocaleHelper.onAttach(this); // Aplicar idioma
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_detalles);
 
@@ -64,13 +64,14 @@ public class DetallesActivity extends AppCompatActivity {
         // Comprobar si estamos editando
         Intent intent = getIntent();
         actividadId = intent.getLongExtra("actividad_id", -1);
-        if (actividadId != -1){ // Logica para actualizar actividad
+        if (actividadId != -1){ // -1 en caso de no existir el campo extra para id, por lo tanto actividad nueva
 
             bButton.setOnClickListener(view -> Borrar());
             aButton.setOnClickListener(view -> Aceptar());
 
             gestorDB = new miDB(this, "Actividades", null, 1);
             Actividad actividad = gestorDB.getActividadPorId(actividadId);
+            // Rellenar los campos para poder actualizarlos
             if (actividad != null){
                 EditText nombreInput = findViewById(R.id.nombreInput);
                 nombreInput.setText(actividad.getNombre());
@@ -100,7 +101,7 @@ public class DetallesActivity extends AppCompatActivity {
             bButton.setText(R.string.cancelar);
             aButton.setText(R.string.crear);
 
-            // Los botones funcionan desde el principio pero se usa una lat/lon por defecto
+            // Se usan las coordenadas de Bilbao como placeholder, para evitar errores por null
             aButton.setOnClickListener(view -> Aceptar());
             bButton.setOnClickListener(view -> Volver());
             latOriginal = BILBAO_LAT;
@@ -114,9 +115,10 @@ public class DetallesActivity extends AppCompatActivity {
                 mLocationOverlay.enableMyLocation();
             }
 
+            // Cuando se reciben las coordenadas se actualiza el mapa
             mLocationOverlay.runOnFirstFix(() -> {
                 runOnUiThread(() -> {
-                    // Hay veces que se runea esta parte cuando la pantalla se ha cerrado este if evita el error
+                    // Hay veces que se runea esta parte cuando la pantalla se ha cerrado, este if evita el error
                     if (!isFinishing() && map != null) {
                         GeoPoint myLocation = mLocationOverlay.getMyLocation();
                         if (myLocation != null) {
@@ -180,7 +182,7 @@ public class DetallesActivity extends AppCompatActivity {
                     mLocationOverlay.enableMyLocation();
                 }
             } else {
-                // Si deniegan los permisos y es una actividad nueva se usan las lat/lon de bilbao
+                // Si deniegan los permisos y es una actividad nueva se usan las coordenadas de bilbao
                 if (actividadId == -1) {
                     MapaHelper.basicConfig(map, BILBAO_LAT, BILBAO_LON, 15.0, true);
                 }
@@ -267,7 +269,7 @@ public class DetallesActivity extends AppCompatActivity {
         dialog.show(getSupportFragmentManager(), "BorrarDialog");
     }
 
-    public void confirmarBorrado() {
+    public void confirmarBorrado() { // Metodo al que llama BorrarFragment
         Intent intent = new Intent();
         intent.putExtra("borrar", true);
         intent.putExtra("actividad_id", actividadId);

@@ -19,6 +19,7 @@ public class ConfigActivity extends AppCompatActivity {
     private RadioGroup radioGroupIdioma;
     private RadioGroup radioGroupTema;
 
+    // Aplicar el idioma
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(LocaleHelper.onAttach(newBase));
@@ -38,7 +39,7 @@ public class ConfigActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        toolbar.setNavigationOnClickListener(v -> onBackPressed()); // Boton para volver a main
 
         radioGroupIdioma = findViewById(R.id.radioGroupIdioma);
         radioGroupTema = findViewById(R.id.radioGroupTema);
@@ -80,7 +81,7 @@ public class ConfigActivity extends AppCompatActivity {
 
         btnGuardar.setOnClickListener(v -> {
             guardarCambios();
-            // Volver a la pantalla principal
+            // Reiniciar para guardar cambios y volver a la pantalla principal
             Intent i = new Intent(ConfigActivity.this, MainActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);
@@ -102,7 +103,7 @@ public class ConfigActivity extends AppCompatActivity {
         if (selectedTemaId == R.id.radioButtonAzul) newColor = "azul";
         else if (selectedTemaId == R.id.radioButtonRojo) newColor = "rojo";
         
-        // Guardar y aplicar preferencias
+        // Guardar y aplicar
         ThemeHelper.setSettings(this, newColor, currentMode);
     }
 

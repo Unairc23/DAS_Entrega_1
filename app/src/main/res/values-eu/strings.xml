@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DAS_Entrega_1</string>
+    <string name="app_name">Korrika Laguntza</string>
     <string name="defaultName">Izena</string>
     <string name="addAceptar">Onartu</string>
     <string name="detallesAceptar">Onartu</string>
@@ -28,4 +28,5 @@
     <string name="borrar">Ezabatu</string>
     <string name="opciones">Aukerak</string>
     <string name="errorNombre">Aktibitatearen izena ezin da utzik egon</string>
+    <string name="borrar_actividad">Ziur zaude jarduera hau ezabatu nahi duzula?</string>
 </resources>

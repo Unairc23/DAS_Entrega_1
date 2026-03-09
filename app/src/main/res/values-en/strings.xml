@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">DAS_Entrega_1</string>
+    <string name="app_name">Korrika Laguntza</string>
     <string name="guardarSalir">Save and exit</string>
     <string name="defaultName">Name</string>
     <string name="addAceptar">Accept</string>
@@ -29,4 +29,5 @@
     <string name="borrar">Delete</string>
     <string name="opciones">Options</string>
     <string name="errorNombre">The title of the activity can\'t be empty</string>
+    <string name="borrar_actividad">Are you sure you want to delete the activity?</string>
 </resources>

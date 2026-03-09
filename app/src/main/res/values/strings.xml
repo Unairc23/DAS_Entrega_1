@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DAS_Entrega_1</string>
+    <string name="app_name">Korrika Laguntza</string>
     <string name="guardarSalir">Guardar y salir</string>
     <string name="defaultName">Nombre</string>
     <string name="addAceptar">Aceptar</string>
@@ -28,4 +28,5 @@
     <string name="borrar">Borrar"</string>
     <string name="opciones">Opciones</string>
     <string name="errorNombre">El titulo de la actividad no puede estar vacío</string>
+    <string name="borrar_actividad">¿Estás seguro de que quieres borrar esta actividad?</string>
 </resources>

@@ -36,11 +36,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(ThemeHelper.getThemeStyle(this));
-        ThemeHelper.applySettings(this);
+        setTheme(ThemeHelper.getThemeStyle(this)); // Aplicar colores
+        ThemeHelper.applySettings(this); // Aplicar modo
         super.onCreate(savedInstanceState);
-        LocaleHelper.onAttach(this);
-        MapaHelper.init(this);
+        LocaleHelper.onAttach(this); // Aplicar idioma
+        MapaHelper.init(this); // Inicializar mapa
         setContentView(R.layout.activity_main);
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
@@ -48,13 +48,15 @@ public class MainActivity extends AppCompatActivity {
 
         gestorDB = new miDB(this, "Actividades", null, 1);
 
-        startActivityIntent =
+        startActivityIntent = // Logica para recibir datos de los intents
                 registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                         result -> {
                             if (result.getResultCode() == RESULT_OK) {
+                                // Si hay datos no hay actividades que crear / actualizar / borrar
                                 if (result.getData() != null) {
                                     boolean borrar = result.getData().getBooleanExtra("borrar", false);
                                     if (!borrar){
+                                        // Si hay un id es que hay una actividad que actualizar
                                         if (result.getData().hasExtra("actividad_id")) {
                                             long id = result.getData().getLongExtra("actividad_id", -1);
                                             actualizarActividad(id, result.getData());
@@ -89,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.opciones) {
+        if (item.getItemId() == R.id.opciones) { // Abrir config desde la toolbar
             abrirConfig();
             return true;
         }
@@ -111,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
         gestorDB.updateActividad(id, nombre, latitud, longitud, descripcion, distancia, (double) duracion);
 
-        for (int i = 0; i < actividades.size(); i++) {
+        for (int i = 0; i < actividades.size(); i++) { // Buscar id en la lista
             if (actividades.get(i).getId() == id) {
                 actividades.get(i).update(nombre, latitud, longitud, distancia, (double) duracion, descripcion);
                 eladaptador.notifyItemChanged(i);
@@ -122,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void añadirActividad(Intent data){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Pide permisos para mandar notificaciones solo cuando lo va a hacer por primera vez
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 11);
             }
@@ -141,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void notificar(){
+    public void notificar(){ // Crea / gestiona la notificación
         NotificationManager elManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         String idCanal = "IdCanal";
 

@@ -1,7 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.DAS_Entrega_1" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">#D0BCFF</item>
+        <item name="colorPrimary">@color/base_primary_dark</item>
+        <item name="colorOnPrimary">#381E72</item>
+        <item name="colorPrimaryContainer">#4F378B</item>
     </style>
 
     <style name="Theme.DAS_Entrega_1" parent="Base.Theme.DAS_Entrega_1" />
@@ -9,16 +11,16 @@
     <!-- Tema Azul Oscuro -->
     <style name="Theme.Azul" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/blue_primary_dark</item>
-        <item name="colorSecondary">@color/blue_primary_dark</item>
-        <item name="colorSecondaryContainer">@color/blue_primary_dark</item>
-        <item name="colorAccent">@color/blue_primary_dark</item>
+        <item name="colorOnPrimary">@color/blue_on_primary_dark</item>
+        <item name="colorPrimaryContainer">@color/blue_primary_container_dark</item>
+        <item name="colorSecondary">@color/blue_secondary</item>
     </style>
 
     <!-- Tema Rojo Oscuro -->
     <style name="Theme.Rojo" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/red_primary_dark</item>
-        <item name="colorSecondary">@color/red_primary_dark</item>
-        <item name="colorSecondaryContainer">@color/red_primary_dark</item>
-        <item name="colorAccent">@color/red_primary_dark</item>
+        <item name="colorOnPrimary">@color/red_on_primary_dark</item>
+        <item name="colorPrimaryContainer">@color/red_primary_container_dark</item>
+        <item name="colorSecondary">@color/red_secondary</item>
     </style>
 </resources>

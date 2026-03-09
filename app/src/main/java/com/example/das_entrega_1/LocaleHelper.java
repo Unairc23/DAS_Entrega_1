@@ -13,16 +13,16 @@ public class LocaleHelper {
 
     private static final String SELECTED_LANGUAGE = "Locale.Helper.Selected.Language";
 
-    public static Context onAttach(Context context) {
+    public static Context onAttach(Context context) { // Metodo que usan las pantallas para cambiar el idioma
         String lang = getPersistedData(context, Locale.getDefault().getLanguage());
         return setLocale(context, lang);
     }
 
-    public static String getLanguage(Context context) {
+    public static String getLanguage(Context context) { // Devuelve el idioma de la región actual
         return getPersistedData(context, Locale.getDefault().getLanguage());
     }
 
-    public static Context setLocale(Context context, String language) {
+    public static Context setLocale(Context context, String language) { // Cambia el idioma
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(SELECTED_LANGUAGE, language);

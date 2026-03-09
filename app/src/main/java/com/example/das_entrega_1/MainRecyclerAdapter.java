@@ -28,7 +28,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainViewHolder> im
 
     @SuppressLint("DefaultLocale")
     @Override
-    public void onBindViewHolder(@NonNull MainViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MainViewHolder holder, int position) { // Rellena la información de los diferentes campos
         Actividad actividad = lasActividades.get(position);
         holder.eltexto.setText(actividad.getNombre());
         holder.ladistancia.setText(String.format("%.2f km", actividad.getDistancia()));

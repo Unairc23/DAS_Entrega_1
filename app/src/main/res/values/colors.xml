@@ -1,13 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
+    <color name="black">#FF1A1C1E</color>
     <color name="white">#FFFFFFFF</color>
-    <!-- Azul -->
-    <color name="blue_primary">#2196F3</color>
-    <color name="blue_primary_dark">#1976D2</color>
-    
-    <!-- Rojo -->
-    
-    <color name="red_primary">#F44336</color>
-    <color name="red_primary_dark">#D32F2F</color>
+
+    <color name="blue_primary">#0061A4</color>
+    <color name="blue_on_primary">#FFFFFF</color>
+    <color name="blue_primary_container">#D1E4FF</color>
+    <color name="blue_on_primary_container">#001D36</color>
+    <color name="blue_secondary">#535F70</color>
+
+    <color name="blue_primary_dark">#9ECAFF</color>
+    <color name="blue_on_primary_dark">#003258</color>
+    <color name="blue_primary_container_dark">#00497D</color>
+
+    <color name="red_primary">#9C4248</color>
+    <color name="red_on_primary">#FFFFFF</color>
+    <color name="red_primary_container">#FFDAD9</color>
+    <color name="red_on_primary_container">#40000A</color>
+    <color name="red_secondary">#775656</color>
+
+    <color name="red_primary_dark">#FFB3B3</color>
+    <color name="red_on_primary_dark">#5F131D</color>
+    <color name="red_primary_container_dark">#7D2B32</color>
+
+    <color name="base_primary">#6750A4</color>
+    <color name="base_on_primary">#FFFFFF</color>
+    <color name="base_primary_container">#EADDFF</color>
+    <color name="base_primary_dark">#D0BCFF</color>
 </resources>

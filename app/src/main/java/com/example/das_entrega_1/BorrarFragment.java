@@ -16,9 +16,9 @@ public class BorrarFragment extends DialogFragment {
         super.onCreateDialog(savedInstanceState);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("¿Deseas borrar esta actividad?");
+        builder.setMessage(R.string.borrar_actividad);
 
-        builder.setPositiveButton("Borrar", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.borrar, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (getActivity() instanceof DetallesActivity) {
@@ -28,10 +28,10 @@ public class BorrarFragment extends DialogFragment {
             }
         });
 
-        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancelar, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
+                dialogInterface.dismiss(); // Cierra el dialogo
             }
         });
 
