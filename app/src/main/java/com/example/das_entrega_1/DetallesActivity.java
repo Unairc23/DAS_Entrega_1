@@ -28,6 +28,7 @@ public class DetallesActivity extends AppCompatActivity {
     private static final double BILBAO_LAT = 43.2630;
     private static final double BILBAO_LON = -2.9350;
 
+    private MapaFragment gMap;
     private MapView map;
     private MyLocationNewOverlay mLocationOverlay;
     private miDB gestorDB;
@@ -57,6 +58,7 @@ public class DetallesActivity extends AppCompatActivity {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
 
+        gMap = (MapaFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentoMapa);
         map = findViewById(R.id.map);
         Button bButton = findViewById(R.id.BorrarButton);
         Button aButton = findViewById(R.id.Aceptarbutton);
@@ -94,7 +96,7 @@ public class DetallesActivity extends AppCompatActivity {
                 latOriginal = actividad.getLat();
                 lonOriginal = actividad.getLon();
 
-                MapaHelper.basicConfig(map, latOriginal, lonOriginal, 18.0, true);
+                gMap.centrar(latOriginal, lonOriginal);
             }
         }
         else{ // Logica para añadir una actividad nueva
@@ -107,7 +109,7 @@ public class DetallesActivity extends AppCompatActivity {
             latOriginal = BILBAO_LAT;
             lonOriginal = BILBAO_LON;
 
-            MapaHelper.basicConfig(map, latOriginal, lonOriginal, 15.0, true);
+            gMap.centrar(latOriginal, lonOriginal);
 
             mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this), map);
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -119,36 +121,16 @@ public class DetallesActivity extends AppCompatActivity {
             mLocationOverlay.runOnFirstFix(() -> {
                 runOnUiThread(() -> {
                     // Hay veces que se runea esta parte cuando la pantalla se ha cerrado, este if evita el error
-                    if (!isFinishing() && map != null) {
+                    if (!isFinishing() && gMap != null) {
                         GeoPoint myLocation = mLocationOverlay.getMyLocation();
                         if (myLocation != null) {
                             latOriginal = myLocation.getLatitude();
                             lonOriginal = myLocation.getLongitude();
-                            MapaHelper.basicConfig(map, latOriginal, lonOriginal, 18.0, true);
+                            gMap.centrar(latOriginal, lonOriginal);
                         }
                     }
                 });
             });
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (map != null) map.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (map != null) map.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (map != null) {
-            map.onDetach();
         }
     }
 
@@ -184,7 +166,8 @@ public class DetallesActivity extends AppCompatActivity {
             } else {
                 // Si deniegan los permisos y es una actividad nueva se usan las coordenadas de bilbao
                 if (actividadId == -1) {
-                    MapaHelper.basicConfig(map, BILBAO_LAT, BILBAO_LON, 15.0, true);
+//                    gMap.centrar(BILBAO_LAT, BILBAO_LON);
+
                 }
             }
         }
