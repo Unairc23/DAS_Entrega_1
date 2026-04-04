@@ -17,10 +17,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
@@ -29,8 +26,6 @@ public class DetallesActivity extends AppCompatActivity {
     private static final double BILBAO_LON = -2.9350;
 
     private MapaFragment gMap;
-    private MapView map;
-    private MyLocationNewOverlay mLocationOverlay;
     private miDB gestorDB;
     private long actividadId = -1;
     private double latOriginal;
@@ -54,12 +49,10 @@ public class DetallesActivity extends AppCompatActivity {
 
         // Permisos
         requestPermissionsIfNecessary(new String[]{
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                Manifest.permission.ACCESS_FINE_LOCATION
         });
 
         gMap = (MapaFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentoMapa);
-        map = findViewById(R.id.map);
         Button bButton = findViewById(R.id.BorrarButton);
         Button aButton = findViewById(R.id.Aceptarbutton);
 
@@ -106,31 +99,10 @@ public class DetallesActivity extends AppCompatActivity {
             // Se usan las coordenadas de Bilbao como placeholder, para evitar errores por null
             aButton.setOnClickListener(view -> Aceptar());
             bButton.setOnClickListener(view -> Volver());
+            
             latOriginal = BILBAO_LAT;
             lonOriginal = BILBAO_LON;
-
             gMap.centrar(latOriginal, lonOriginal);
-
-            mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this), map);
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                mLocationOverlay.enableMyLocation();
-            }
-
-            // Cuando se reciben las coordenadas se actualiza el mapa
-            mLocationOverlay.runOnFirstFix(() -> {
-                runOnUiThread(() -> {
-                    // Hay veces que se runea esta parte cuando la pantalla se ha cerrado, este if evita el error
-                    if (!isFinishing() && gMap != null) {
-                        GeoPoint myLocation = mLocationOverlay.getMyLocation();
-                        if (myLocation != null) {
-                            latOriginal = myLocation.getLatitude();
-                            lonOriginal = myLocation.getLongitude();
-                            gMap.centrar(latOriginal, lonOriginal);
-                        }
-                    }
-                });
-            });
         }
     }
 
@@ -160,14 +132,8 @@ public class DetallesActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (mLocationOverlay != null) {
-                    mLocationOverlay.enableMyLocation();
-                }
-            } else {
-                // Si deniegan los permisos y es una actividad nueva se usan las coordenadas de bilbao
-                if (actividadId == -1) {
-//                    gMap.centrar(BILBAO_LAT, BILBAO_LON);
-
+                if (gMap != null) {
+                    gMap.activarUbicacion();
                 }
             }
         }
@@ -220,15 +186,14 @@ public class DetallesActivity extends AppCompatActivity {
         intent.putExtra("duracion", duracionSeg);
         intent.putExtra("descripcion", valorDescripcion);
 
+        // Obtener la ubicación del mapa
         double currentLat = latOriginal;
         double currentLon = lonOriginal;
-
-        if (mLocationOverlay != null) {
-            GeoPoint myLocation = mLocationOverlay.getMyLocation();
-            if (myLocation != null) {
-                currentLat = myLocation.getLatitude();
-                currentLon = myLocation.getLongitude();
-            }
+        
+        LatLng pos = gMap.getPosicionActual();
+        if (pos != null) {
+            currentLat = pos.latitude;
+            currentLon = pos.longitude;
         }
 
         intent.putExtra("latitud", currentLat);

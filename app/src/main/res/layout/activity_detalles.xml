@@ -7,14 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".DetallesActivity">
 
-    <org.osmdroid.views.MapView
-        android:id="@+id/map"
-        android:layout_width="0dp"
-        android:layout_height="300dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <fragment
         android:id="@+id/fragmentoMapa"
         android:name="com.example.das_entrega_1.MapaFragment"
@@ -37,7 +29,7 @@
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/map" />
+        app:layout_constraintTop_toBottomOf="@+id/fragmentoMapa" />
 
     <TextView
         android:id="@+id/dText"

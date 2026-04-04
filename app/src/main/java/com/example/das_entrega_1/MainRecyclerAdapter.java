@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 public class MainRecyclerAdapter extends RecyclerView.Adapter<MainViewHolder> implements MainViewHolder.OnItemClickListener{
@@ -38,9 +39,17 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainViewHolder> im
         holder.eltiempo.setText(String.format("%02d:%02d", horas, minutos));
         holder.ladescripcion.setText(actividad.getDescripcion());
 
-        MapaHelper.init(holder.itemView.getContext());
-        // Inicializar el mapa pero sin que sea interactivo
-        MapaHelper.basicConfig(holder.elmapa, actividad.getLat(), actividad.getLon(), 15.0, false);
+        String url = "https://maps.googleapis.com/maps/api/staticmap?"
+                + "center=" + actividad.getLat() + "," + actividad.getLon()
+                + "&zoom=15"
+                + "&size=400x200"
+                + "&markers=color:red%7C" + actividad.getLat() + "," + actividad.getLon()
+                + "&key=" + BuildConfig.MAPS_API_KEY;
+
+        Glide.with(holder.itemView.getContext())
+                .load(url)
+                .placeholder(R.drawable.ic_launcher_background) // imagen mientras carga
+                .into(holder.elmapa);
     }
 
     @Override

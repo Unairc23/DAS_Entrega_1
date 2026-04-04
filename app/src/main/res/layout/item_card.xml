@@ -16,13 +16,15 @@
         android:layout_height="wrap_content"
         android:padding="8dp">
 
-        <org.osmdroid.views.MapView
+        <ImageView
             android:id="@+id/mapItem"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
 
         <!-- Vista transparente para capturar el clic encima del mapa -->
         <View
@@ -72,7 +74,7 @@
             app:layout_constraintTop_toBottomOf="@+id/txtDistanciaItem"
             tools:text="01:30" />
 
-        <!-- Descripción (Derecha) -->
+        <!-- Descripción -->
         <TextView
             android:id="@+id/txtDescripcionItem"
             android:layout_width="0dp"

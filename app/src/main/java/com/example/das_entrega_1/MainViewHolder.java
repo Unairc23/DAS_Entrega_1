@@ -1,6 +1,7 @@
 package com.example.das_entrega_1;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,7 +14,7 @@ public class MainViewHolder extends RecyclerView.ViewHolder {
     public TextView eltiempo;
     public TextView ladistancia;
     public TextView ladescripcion;
-    public MapView elmapa;
+    public ImageView elmapa;
     public View elmapaClick; //El mapa consume los clics, poniendo una vista por encima esta peude detectar el click
 
     public interface OnItemClickListener {
