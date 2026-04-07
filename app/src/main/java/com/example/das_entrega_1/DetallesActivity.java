@@ -36,7 +36,6 @@ public class DetallesActivity extends AppCompatActivity {
     private static final double BILBAO_LON = -2.9350;
 
     private MapaFragment gMap;
-    private miDB gestorDB;
     private long actividadId = -1;
     private double latOriginal;
     private double lonOriginal;

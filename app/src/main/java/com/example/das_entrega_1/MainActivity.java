@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -191,10 +192,14 @@ public class MainActivity extends AppCompatActivity {
                 .observe(this, workInfo -> {
                     if (workInfo != null && workInfo.getState() == WorkInfo.State.SUCCEEDED) {
                         long id = workInfo.getOutputData().getLong("id", -1);
+                        for (Actividad a : actividades){ // Evitar que al saltar varias veces el observer la actividad se añada dos veces
+                            if (a.getId() == id){
+                                return;
+                            }
+                        }
                         notificar();
                         Actividad nueva = new Actividad(id, nombre, latitud, longitud,
                                 distancia, duracion, descripcion);
-                        actividades.add(nueva);
                         eladaptador.addItem(nueva);
                     }
                 });
@@ -233,7 +238,6 @@ public class MainActivity extends AppCompatActivity {
 
         for (int i = 0; i < actividades.size(); i++) {
             if (actividades.get(i).getId() == id) {
-                actividades.remove(i);
                 eladaptador.removeItem(i);
                 break;
             }
