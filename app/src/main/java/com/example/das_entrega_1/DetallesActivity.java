@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -16,8 +17,17 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import com.google.android.gms.maps.model.LatLng;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -59,38 +69,53 @@ public class DetallesActivity extends AppCompatActivity {
         // Comprobar si estamos editando
         Intent intent = getIntent();
         actividadId = intent.getLongExtra("actividad_id", -1);
-        if (actividadId != -1){ // -1 en caso de no existir el campo extra para id, por lo tanto actividad nueva
-
+        if (actividadId != -1) {
             bButton.setOnClickListener(view -> Borrar());
             aButton.setOnClickListener(view -> Aceptar());
 
-            gestorDB = new miDB(this, "Actividades", null, 1);
-            Actividad actividad = gestorDB.getActividadPorId(actividadId);
-            // Rellenar los campos para poder actualizarlos
-            if (actividad != null){
-                EditText nombreInput = findViewById(R.id.nombreInput);
-                nombreInput.setText(actividad.getNombre());
+            Data input = new Data.Builder()
+                    .putString("accion", miDBRemota.ACCION_GET_ID)
+                    .putLong("id", actividadId)
+                    .build();
 
-                EditText kmInput = findViewById(R.id.kmInput);
-                kmInput.setText(String.valueOf(actividad.getDistancia()));
+            OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(miDBRemota.class)
+                    .setInputData(input).build();
 
-                EditText horasInput = findViewById(R.id.horasInput);
-                int horas = (int) (actividad.getDuracion() / 3600);
+            WorkManager.getInstance(this).enqueue(request);
 
-                EditText minutosInput = findViewById(R.id.minutosInput);
-                int minutos = (int) ((actividad.getDuracion() % 3600) / 60);
+            LiveData<WorkInfo> liveData = WorkManager.getInstance(this)
+                    .getWorkInfoByIdLiveData(request.getId());
 
-                horasInput.setText(String.valueOf(horas));
-                minutosInput.setText(String.valueOf(minutos));
+            Observer<WorkInfo>[] observerRef = new Observer[1];
+            observerRef[0] = workInfo -> {
+                Log.d("workinfo", String.valueOf(workInfo));
+                if (workInfo != null && workInfo.getState().isFinished()) {
+                    liveData.removeObserver(observerRef[0]);
+                    if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+                        try {
+                            String actividadJson = workInfo.getOutputData().getString("actividad");
+                            JSONObject obj = new JSONObject(actividadJson);
 
-                EditText descripcionInput = findViewById(R.id.descripcionInput);
-                descripcionInput.setText(actividad.getDescripcion());
+                            String nombre = obj.getString("nombre");
+                            double distancia = obj.getDouble("distancia");
+                            double duracion = obj.getDouble("duracion");
+                            String descripcion = obj.optString("descripcion", "");
+                            latOriginal = obj.getDouble("latitud");
+                            lonOriginal = obj.getDouble("longitud");
 
-                latOriginal = actividad.getLat();
-                lonOriginal = actividad.getLon();
-
-                gMap.centrar(latOriginal, lonOriginal);
-            }
+                            ((EditText) findViewById(R.id.nombreInput)).setText(nombre);
+                            ((EditText) findViewById(R.id.kmInput)).setText(String.valueOf(distancia));
+                            ((EditText) findViewById(R.id.horasInput)).setText(String.valueOf((int)(duracion / 3600)));
+                            ((EditText) findViewById(R.id.minutosInput)).setText(String.valueOf((int)((duracion % 3600) / 60)));
+                            ((EditText) findViewById(R.id.descripcionInput)).setText(descripcion);
+                            gMap.centrar(latOriginal, lonOriginal);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+            liveData.observeForever(observerRef[0]);
         }
         else{ // Logica para añadir una actividad nueva
             bButton.setText(R.string.cancelar);
@@ -133,7 +158,7 @@ public class DetallesActivity extends AppCompatActivity {
         if (requestCode == 1) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (gMap != null) {
-                    gMap.activarUbicacion();
+                    gMap.activarUbicacionYCentrar();
                 }
             }
         }

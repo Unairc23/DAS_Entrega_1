@@ -21,9 +21,17 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -31,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
 
     private MainRecyclerAdapter eladaptador;
     private ActivityResultLauncher<Intent> startActivityIntent;
-    private miDB gestorDB;
     private ArrayList<Actividad> actividades;
 
     @Override
@@ -45,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        gestorDB = new miDB(this, "Actividades", null, 1);
 
         startActivityIntent = // Logica para recibir datos de los intents
                 registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -73,12 +78,28 @@ public class MainActivity extends AppCompatActivity {
                         });
 
         RecyclerView lista = findViewById(R.id.mrv);
-        actividades = gestorDB.getActividades();
 
-        eladaptador = new MainRecyclerAdapter(actividades, this);
-        lista.setAdapter(eladaptador);
-        lista.setLayoutManager(new LinearLayoutManager(this));
+        Data inputGetAll = new Data.Builder()
+                .putString("accion", miDBRemota.ACCION_GET)
+                .build();
 
+        OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(miDBRemota.class)
+                .setInputData(inputGetAll)
+                .build();
+
+        WorkManager.getInstance(this).enqueue(request);
+
+        WorkManager.getInstance(this)
+                .getWorkInfoByIdLiveData(request.getId())
+                .observe(this, workInfo -> {
+                    if (workInfo != null && workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+                        String listaJson = workInfo.getOutputData().getString("lista");
+                        actividades = parsearLista(listaJson);
+                        eladaptador = new MainRecyclerAdapter(actividades, this);
+                        lista.setAdapter(eladaptador);
+                        lista.setLayoutManager(new LinearLayoutManager(this));
+                    }
+                });
         FloatingActionButton Addbutton = findViewById(R.id.Addbutton);
         Addbutton.setOnClickListener(view -> abrirDetalles(-1)); // -1 para indicar que la actividad no está en la lista y hay que crearla
     }
@@ -109,20 +130,32 @@ public class MainActivity extends AppCompatActivity {
         double latitud = data.getDoubleExtra("latitud", 0.0);
         double longitud = data.getDoubleExtra("longitud", 0.0);
         double distancia = data.getDoubleExtra("distancia", 0.0);
-        long duracion = data.getLongExtra("duracion", 0);
+        double duracion = data.getDoubleExtra("duracion", 0);
 
-        gestorDB.updateActividad(id, nombre, latitud, longitud, descripcion, distancia, (double) duracion);
+        Data input = new Data.Builder()
+                .putString("accion", miDBRemota.ACCION_UPDATE)
+                .putLong("id", id)
+                .putString("nombre", nombre)
+                .putDouble("latitud", latitud)
+                .putDouble("longitud", longitud)
+                .putString("descripcion", descripcion)
+                .putDouble("distancia", distancia)
+                .putDouble("duracion", duracion)
+                .build();
+        WorkManager.getInstance(this).enqueue(
+                new OneTimeWorkRequest.Builder(miDBRemota.class).setInputData(input).build()
+        );
 
         for (int i = 0; i < actividades.size(); i++) { // Buscar id en la lista
             if (actividades.get(i).getId() == id) {
-                actividades.get(i).update(nombre, latitud, longitud, distancia, (double) duracion, descripcion);
+                actividades.get(i).update(nombre, latitud, longitud, distancia, duracion, descripcion);
                 eladaptador.notifyItemChanged(i);
                 break;
             }
         }
     }
 
-    public void añadirActividad(Intent data){
+    public void añadirActividad(Intent data) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Pide permisos para mandar notificaciones solo cuando lo va a hacer por primera vez
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -135,13 +168,36 @@ public class MainActivity extends AppCompatActivity {
         double latitud = data.getDoubleExtra("latitud", 0.0);
         double longitud = data.getDoubleExtra("longitud", 0.0);
         double distancia = data.getDoubleExtra("distancia", 0.0);
-        long duracion = data.getLongExtra("duracion", 0);
-        if (nombre != null && !nombre.isEmpty()) {
-            long id = gestorDB.addActividad(nombre, latitud, longitud, descripcion, distancia, (double) duracion);
-            notificar();
-            Actividad nuevaActividad = new Actividad(id, nombre, latitud, longitud, distancia, (double) duracion, descripcion);
-            eladaptador.addItem(nuevaActividad);
-        }
+        double duracion = data.getDoubleExtra("duracion", 0);
+
+        if (nombre == null || nombre.isEmpty()) return;
+
+        Data input = new Data.Builder()
+                .putString("accion", miDBRemota.ACCION_ADD)
+                .putString("nombre", nombre)
+                .putDouble("latitud", latitud)
+                .putDouble("longitud", longitud)
+                .putString("descripcion", descripcion)
+                .putDouble("distancia", distancia)
+                .putDouble("duracion", duracion)
+                .build();
+
+        OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(miDBRemota.class)
+                .setInputData(input).build();
+
+        WorkManager.getInstance(this).enqueue(request);
+        WorkManager.getInstance(this)
+                .getWorkInfoByIdLiveData(request.getId())
+                .observe(this, workInfo -> {
+                    if (workInfo != null && workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+                        long id = workInfo.getOutputData().getLong("id", -1);
+                        notificar();
+                        Actividad nueva = new Actividad(id, nombre, latitud, longitud,
+                                distancia, duracion, descripcion);
+                        actividades.add(nueva);
+                        eladaptador.addItem(nueva);
+                    }
+                });
     }
 
     public void notificar(){ // Crea / gestiona la notificación
@@ -167,9 +223,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void borrarActividad(long id) {
-        gestorDB.deleteActividadPorId(id);
+        Data input = new Data.Builder()
+                .putString("accion", miDBRemota.ACCION_DELETE)
+                .putLong("id", id)
+                .build();
+        WorkManager.getInstance(this).enqueue(
+                new OneTimeWorkRequest.Builder(miDBRemota.class).setInputData(input).build()
+        );
+
         for (int i = 0; i < actividades.size(); i++) {
             if (actividades.get(i).getId() == id) {
+                actividades.remove(i);
                 eladaptador.removeItem(i);
                 break;
             }
@@ -188,5 +252,27 @@ public class MainActivity extends AppCompatActivity {
     public void abrirConfig() {
         Intent intent = new Intent(this, ConfigActivity.class);
         startActivityIntent.launch(intent);
+    }
+
+    private ArrayList<Actividad> parsearLista(String json) {
+        ArrayList<Actividad> lista = new ArrayList<>();
+        try {
+            JSONArray array = new JSONArray(json);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
+                lista.add(new Actividad(
+                        obj.getLong("id"),
+                        obj.getString("nombre"),
+                        obj.getDouble("latitud"),
+                        obj.getDouble("longitud"),
+                        obj.getDouble("distancia"),
+                        obj.getDouble("duracion"),
+                        obj.getString("descripcion")
+                ));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return lista;
     }
 }
