@@ -30,4 +30,9 @@
     <string name="opciones">Options</string>
     <string name="errorNombre">The title of the activity can\'t be empty</string>
     <string name="borrar_actividad">Are you sure you want to delete the activity?</string>
+    <string name="perfil">Profile</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="name">Name</string>
+    <string name="password">Password</string>
 </resources>

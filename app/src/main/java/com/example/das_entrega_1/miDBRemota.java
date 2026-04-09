@@ -26,6 +26,9 @@ public class miDBRemota extends Worker {
     public static final String ACCION_GET    = "getAll";
     public static final String ACCION_GET_ID = "getById";
     public static final String ACCION_DELETE = "delete";
+    public static final String ACCION_LOGIN = "login";
+    public static final String ACCION_REGISTER = "register";
+    public static final String ACCION_GET_USER = "getuser";
     public miDBRemota(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
@@ -103,6 +106,31 @@ public class miDBRemota extends Worker {
                 case ACCION_DELETE: {
                     deleteActividadPorId(getInputData().getLong("id", -1));
                     return Result.success();
+                }
+
+                case ACCION_LOGIN: {
+                    long userId = usuarioLogin(
+                            getInputData().getString("nombre"),
+                            getInputData().getString("contraseña"));
+                    return userId != -1
+                            ? Result.success(new Data.Builder().putLong("id", userId).build())
+                            : Result.failure();
+                }
+
+                case ACCION_REGISTER: {
+                    long userId = usuarioRegister(
+                            getInputData().getString("nombre"),
+                            getInputData().getString("contraseña"));
+                    return userId != -1
+                            ? Result.success(new Data.Builder().putLong("id", userId).build())
+                            : Result.failure();
+                }
+
+                case ACCION_GET_USER:{
+                    String nombre = getUsuario(getInputData().getLong("id", -1));
+                    return nombre != null
+                            ? Result.success(new Data.Builder().putString("nombre", nombre).build())
+                            : Result.failure();
                 }
 
                 default:
@@ -201,6 +229,64 @@ public class miDBRemota extends Worker {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
+    private long usuarioLogin(String nombre, String contraseña){
+        try {
+            JSONObject params = new JSONObject();
+            params.put("accion", "login");
+            params.put("nombre", nombre);
+            params.put("contraseña", contraseña);
+
+            String respuesta = enviarPost(params);
+
+            if (respuesta != null) {
+                return new JSONObject(respuesta).getLong("id");
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    private long usuarioRegister(String nombre, String contraseña){
+        try{
+            JSONObject params = new JSONObject();
+            params.put("accion", "register");
+            params.put("nombre", nombre);
+            params.put("contraseña", contraseña);
+
+            String respuesta = enviarPost(params);
+
+            if (respuesta != null) {
+                return new JSONObject(respuesta).getLong("id");
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    private String getUsuario(long id){
+        try{
+            JSONObject params = new JSONObject();
+            params.put("accion", "getuser");
+            params.put("id", id);
+
+            Log.d("miDBRemota", "Params: " + params.toString() + "");
+            String respuesta = enviarPost(params);
+            if (respuesta != null) {
+                JSONObject root = new JSONObject(respuesta);
+                JSONObject obj = root.getJSONObject("usuario");
+                return obj.getString("Nombre");
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     // Funcion para no repetir constantemente código
     private String enviarPost(JSONObject params) {
         HttpURLConnection conn = null;
@@ -217,7 +303,7 @@ public class miDBRemota extends Worker {
             out.close();
 
             int code = conn.getResponseCode();
-            Log.d("miDBRemota", "Código respuesta: " + code);
+            Log.d("miDBRemota", "Codigo respuesta: " + code);
 
             if (code == 200 || code == 201) {
                 BufferedReader reader = new BufferedReader(

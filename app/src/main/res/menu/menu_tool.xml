@@ -2,8 +2,13 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/perfil"
+        android:icon="@drawable/ic_sun"
+        android:title="@string/perfil"
+        app:showAsAction="ifRoom|withText" />
+    <item
         android:id="@+id/opciones"
         android:icon="@drawable/options"
-        android:title="Opciones"
+        android:title="@string/opciones"
         app:showAsAction="ifRoom|withText" />
 </menu>

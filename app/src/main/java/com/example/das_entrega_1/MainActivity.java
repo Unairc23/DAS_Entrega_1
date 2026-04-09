@@ -20,6 +20,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.Data;
@@ -41,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private MainRecyclerAdapter eladaptador;
     private ActivityResultLauncher<Intent> startActivityIntent;
     private ArrayList<Actividad> actividades;
+    private Long userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,11 @@ public class MainActivity extends AppCompatActivity {
         LocaleHelper.onAttach(this); // Aplicar idioma
         MapaHelper.init(this); // Inicializar mapa
         setContentView(R.layout.activity_main);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -61,18 +70,26 @@ public class MainActivity extends AppCompatActivity {
                                 // Si hay datos no hay actividades que crear / actualizar / borrar
                                 if (result.getData() != null) {
                                     boolean borrar = result.getData().getBooleanExtra("borrar", false);
-                                    if (!borrar){
+                                    boolean logout = result.getData().getBooleanExtra("logout", false);
+                                    if (borrar){
+                                        long id = result.getData().getLongExtra("actividad_id", -1);
+                                        borrarActividad(id);
+                                    }
+                                    else if (logout){
+                                        userId = null;
+                                    }
+                                    else {
                                         // Si hay un id es que hay una actividad que actualizar
                                         if (result.getData().hasExtra("actividad_id")) {
                                             long id = result.getData().getLongExtra("actividad_id", -1);
                                             actualizarActividad(id, result.getData());
-                                        } else {
+                                        }
+                                        else if (result.getData().hasExtra("user_id")) {
+                                            userId = result.getData().getLongExtra("user_id", -1);
+                                        }
+                                        else {
                                             añadirActividad(result.getData());
                                         }
-                                    }
-                                    else{
-                                        long id = result.getData().getLongExtra("actividad_id", -1);
-                                        borrarActividad(id);
                                     }
                                 }
                             }
@@ -115,6 +132,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.opciones) { // Abrir config desde la toolbar
             abrirConfig();
+            return true;
+        }
+        else if (item.getItemId() == R.id.perfil) { // Abrir perfil desde la toolbar
+            gestionarLogin();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -256,6 +277,18 @@ public class MainActivity extends AppCompatActivity {
     public void abrirConfig() {
         Intent intent = new Intent(this, ConfigActivity.class);
         startActivityIntent.launch(intent);
+    }
+
+    public void gestionarLogin(){
+        if (userId == null){
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivityIntent.launch(intent);
+        }
+        else{
+            Intent intent = new Intent(this, PerfilActivity.class);
+            intent.putExtra("user_id", userId);
+            startActivityIntent.launch(intent);
+        }
     }
 
     private ArrayList<Actividad> parsearLista(String json) {

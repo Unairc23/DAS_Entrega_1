@@ -29,4 +29,9 @@
     <string name="opciones">Opciones</string>
     <string name="errorNombre">El titulo de la actividad no puede estar vacío</string>
     <string name="borrar_actividad">¿Estás seguro de que quieres borrar esta actividad?</string>
+    <string name="perfil">Perfil</string>
+    <string name="login">Iniciar sesión</string>"
+    <string name="register">Register</string>
+    <string name="name">Name</string>
+    <string name="password">Password</string>
 </resources>
