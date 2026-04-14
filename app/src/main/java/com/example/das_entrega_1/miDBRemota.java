@@ -1,6 +1,8 @@
 package com.example.das_entrega_1;
 import android.content.Context;
+import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.work.Data;
@@ -12,14 +14,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class miDBRemota extends Worker {
-    public static String direccion = "http://136.119.90.107:81/";
+    public static String direccion = "http://35.238.248.169:81/";
 
     public static final String ACCION_ADD    = "add";
     public static final String ACCION_UPDATE = "update";
@@ -29,6 +36,7 @@ public class miDBRemota extends Worker {
     public static final String ACCION_LOGIN = "login";
     public static final String ACCION_REGISTER = "register";
     public static final String ACCION_GET_USER = "getuser";
+    public static final String ACCION_CAMBIAR_PERFIL = "cambiarImagen";
     public miDBRemota(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
@@ -127,10 +135,37 @@ public class miDBRemota extends Worker {
                 }
 
                 case ACCION_GET_USER:{
-                    String nombre = getUsuario(getInputData().getLong("id", -1));
-                    return nombre != null
-                            ? Result.success(new Data.Builder().putString("nombre", nombre).build())
-                            : Result.failure();
+                    JSONObject user = getUsuario(getInputData().getLong("id", -1));
+                    if (user != null) {
+                        String nombre = user.optString("Nombre");
+                        String imagenBase64 = user.optString("imagen");
+                        
+                        Data.Builder outputData = new Data.Builder().putString("nombre", nombre);
+                        
+                        if (imagenBase64 != null && !imagenBase64.isEmpty()) {
+                            try {
+                                byte[] bytes = Base64.decode(imagenBase64, Base64.DEFAULT);
+                                File file = new File(getApplicationContext().getCacheDir(), "perfil_recibido.jpg");
+                                FileOutputStream fos = new FileOutputStream(file);
+                                fos.write(bytes);
+                                fos.close();
+                                outputData.putString("imagenPath", file.getAbsolutePath());
+                            } catch (Exception e) {
+                                Log.e("miDBRemota", "Error guardando imagen: " + e.getMessage());
+                            }
+                        }
+                        
+                        return Result.success(outputData.build());
+                    }
+                    return Result.failure();
+                }
+
+                case ACCION_CAMBIAR_PERFIL:{
+                    Log.d("miDBRemota", "cambiarFotoPerfil enrutador");
+                    cambiarFotoPerfil(
+                            getInputData().getLong("id", -1),
+                            getInputData().getString("imagen"));
+                    return Result.success();
                 }
 
                 default:
@@ -267,7 +302,7 @@ public class miDBRemota extends Worker {
         return -1;
     }
 
-    private String getUsuario(long id){
+    private JSONObject getUsuario(long id){
         try{
             JSONObject params = new JSONObject();
             params.put("accion", "getuser");
@@ -277,14 +312,44 @@ public class miDBRemota extends Worker {
             String respuesta = enviarPost(params);
             if (respuesta != null) {
                 JSONObject root = new JSONObject(respuesta);
-                JSONObject obj = root.getJSONObject("usuario");
-                return obj.getString("Nombre");
+                return root.getJSONObject("usuario");
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void cambiarFotoPerfil(long id, String rutaImagen){
+        try {
+            Log.d("miDBRemota", "cambiarFotoPerfil dentrp");
+            // Leer el archivo y convertir a Base64 aquí dentro
+            File archivo = new File(rutaImagen);
+            byte[] bytes = new byte[(int) archivo.length()];
+            FileInputStream fis = new FileInputStream(archivo);
+            fis.read(bytes);
+            fis.close();
+            Log.d("miDBRemota", "cambiarFotoPerfil archivo leido");
+
+            String imagenBase64 = Base64.encodeToString(bytes, Base64.NO_WRAP);
+            Log.d("miDBRemota", "cambiarFotoPerfil imagenBase64");
+
+            JSONObject params = new JSONObject();
+            params.put("accion", "cambiarImagen");
+            params.put("id", id);
+            params.put("imagen", imagenBase64);
+            Log.d("miDBRemota", "cambiarFotoPerfil params creados");
+
+
+            enviarPost(params);
+
+            // Borrar archivo temporal
+            archivo.delete();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // Funcion para no repetir constantemente código
