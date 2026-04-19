@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class miDBRemota extends Worker {
-    public static String direccion = "http://35.238.248.169:81/";
+    public static String direccion = "";
 
     public static final String ACCION_ADD    = "add";
     public static final String ACCION_UPDATE = "update";
@@ -380,6 +380,12 @@ public class miDBRemota extends Worker {
                 Log.d("miDBRemota", "Respuesta: " + sb);
                 return sb.toString();
             }
+
+            if (code == 404) {
+                Log.e("miDBRemota", "Error 404");
+                return null;
+            };
+
         } catch (Exception e) {
             Log.e("miDBRemota", "Error en enviarPost: " + e.getMessage());
             e.printStackTrace();

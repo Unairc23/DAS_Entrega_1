@@ -28,10 +28,17 @@
     <string name="borrar">Borrar"</string>
     <string name="opciones">Opciones</string>
     <string name="errorNombre">El titulo de la actividad no puede estar vacío</string>
+    <string name="errorUser">El nombre de usuario no puede estar vacío</string>
+    <string name="errorPassword">La contraseña no puede estar vacía</string>
+    <string name="errorLogin">Usuario o contraseña incorrectos</string>
+    <string name="errorRegister">Este usuario ya existe</string>
     <string name="borrar_actividad">¿Estás seguro de que quieres borrar esta actividad?</string>
     <string name="perfil">Perfil</string>
     <string name="login">Iniciar sesión</string>"
     <string name="register">Register</string>
     <string name="name">Name</string>
     <string name="password">Password</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Añadir widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
 </resources>

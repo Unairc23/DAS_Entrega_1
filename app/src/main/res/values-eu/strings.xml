@@ -28,10 +28,15 @@
     <string name="borrar">Ezabatu</string>
     <string name="opciones">Aukerak</string>
     <string name="errorNombre">Aktibitatearen izena ezin da utzik egon</string>
+    <string name="errorPassword">Pasahitza ezin da hutsik egon</string>
+    <string name="errorLogin">"Erabiltzaile edo pasahitz okerrak "</string>
+    <string name="errorRegister">Erabiltzaile hau jada existitzen da</string>
     <string name="borrar_actividad">Ziur zaude jarduera hau ezabatu nahi duzula?</string>
     <string name="perfil">Profila</string>
     <string name="login">Saioa hasi</string>
     <string name="register">Erregistratu</string>
     <string name="name">Izena</string>
     <string name="password">Pasahitza</string>
+    <string name="errorUser">Erabiltzaile izena ezin da hutsik egon</string>
+    <string name="add_widget">Widget gehitu</string>
 </resources>

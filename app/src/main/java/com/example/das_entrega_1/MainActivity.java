@@ -171,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < actividades.size(); i++) { // Buscar id en la lista
             if (actividades.get(i).getId() == id) {
                 actividades.get(i).update(nombre, latitud, longitud, distancia, duracion, descripcion);
+                Log.d("miMain", "Duracion" + duracion);
                 eladaptador.notifyItemChanged(i);
                 break;
             }
@@ -221,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
                         notificar();
                         Actividad nueva = new Actividad(id, nombre, latitud, longitud,
                                 distancia, duracion, descripcion);
+                        Log.d("miMain", "Duracion" + duracion);
                         eladaptador.addItem(nueva);
                     }
                 });

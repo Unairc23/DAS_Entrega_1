@@ -1,6 +1,7 @@
 package com.example.das_entrega_1;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -44,7 +45,10 @@ public class PerfilActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(ThemeHelper.getThemeStyle(this)); // Aplicar colores
+        ThemeHelper.applySettings(this); // Aplicar modo
         super.onCreate(savedInstanceState);
+        LocaleHelper.onAttach(this); // Aplicar idioma
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_perfil);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -106,6 +110,11 @@ public class PerfilActivity extends AppCompatActivity {
             }
         };
         liveData.observeForever(observerRef[0]);
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase));
     }
 
     private void logout(){

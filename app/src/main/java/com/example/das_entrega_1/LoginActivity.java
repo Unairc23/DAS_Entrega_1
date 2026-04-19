@@ -1,10 +1,12 @@
 package com.example.das_entrega_1;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +29,10 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(ThemeHelper.getThemeStyle(this)); // Aplicar colores
+        ThemeHelper.applySettings(this); // Aplicar modo
         super.onCreate(savedInstanceState);
+        LocaleHelper.onAttach(this); // Aplicar idioma
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -50,11 +55,24 @@ public class LoginActivity extends AppCompatActivity {
         registerButton.setOnClickListener(view -> register());
     }
 
-    private void login(){
-        String nombre = ((EditText) findViewById(R.id.usarioText)).getText().toString();
-        String contraseña = ((EditText) findViewById(R.id.contraseñaText)).getText().toString();
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase));
+    }
 
-        if (nombre.isEmpty() || contraseña.isEmpty()) {
+    private void login(){
+        EditText nombreText = findViewById(R.id.usarioText);
+        EditText contraseñaText = findViewById(R.id.contraseñaText);
+
+        String nombre = nombreText.getText().toString();
+        String contraseña = contraseñaText.getText().toString();
+
+        if (nombre.isEmpty()) {
+            nombreText.setError(getString(R.string.errorUser));
+            return;
+        }
+        if (contraseña.isEmpty()) {
+            contraseñaText.setError(getString(R.string.errorPassword));
             return;
         }
 
@@ -86,16 +104,27 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                     }
                 }
+                else if (workInfo.getState() == WorkInfo.State.FAILED){
+                    Toast.makeText(LoginActivity.this, getString(R.string.errorLogin), Toast.LENGTH_SHORT).show();
+                }
             }
         };
         liveData.observeForever(observerRef[0]);
     }
 
     private void register(){
-        String nombre = ((EditText) findViewById(R.id.usarioText)).getText().toString();
-        String contraseña = ((EditText) findViewById(R.id.contraseñaText)).getText().toString();
+        EditText nombreText = findViewById(R.id.usarioText);
+        EditText contraseñaText = findViewById(R.id.contraseñaText);
 
-        if (nombre.isEmpty() || contraseña.isEmpty()) {
+        String nombre = nombreText.getText().toString();
+        String contraseña = contraseñaText.getText().toString();
+
+        if (nombre.isEmpty()) {
+            nombreText.setError(getString(R.string.errorUser));
+            return;
+        }
+        if (contraseña.isEmpty()) {
+            contraseñaText.setError(getString(R.string.errorPassword));
             return;
         }
 
@@ -127,6 +156,9 @@ public class LoginActivity extends AppCompatActivity {
                         setResult(RESULT_OK, intent);
                         finish();
                     }
+                }
+                else if (workInfo.getState() == WorkInfo.State.FAILED){
+                    Toast.makeText(LoginActivity.this, getString(R.string.errorRegister), Toast.LENGTH_SHORT).show();
                 }
             }
         };

@@ -45,7 +45,6 @@ public class DetallesActivity extends AppCompatActivity {
         setTheme(ThemeHelper.getThemeStyle(this)); // Aplicar colores
         ThemeHelper.applySettings(this); // Aplicar modo
         super.onCreate(savedInstanceState);
-        MapaHelper.init(this); // Inicializar mapa
         LocaleHelper.onAttach(this); // Aplicar idioma
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_detalles);
@@ -202,7 +201,7 @@ public class DetallesActivity extends AppCompatActivity {
             minutos = 0;
         }
 
-        long duracionSeg = (horas * 3600L + minutos * 60L);
+        Double duracionSeg = (double) (horas * 3600L + minutos * 60L);
 
         Intent intent = new Intent();
         intent.putExtra("nombre", valorNombre);

@@ -29,10 +29,15 @@
     <string name="borrar">Delete</string>
     <string name="opciones">Options</string>
     <string name="errorNombre">The title of the activity can\'t be empty</string>
+    <string name="errorPassword">Password can\'t be empty</string>
+    <string name="errorRegister">This user already exists</string>
     <string name="borrar_actividad">Are you sure you want to delete the activity?</string>
     <string name="perfil">Profile</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
     <string name="name">Name</string>
     <string name="password">Password</string>
+    <string name="errorUser">The username can\'t be empty</string>
+    <string name="add_widget">Add widget</string>
+    <string name="errorLogin">Incorrect user o password</string>
 </resources>
