@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class miDBRemota extends Worker {
-    public static String direccion = "";
+    public static String direccion = BuildConfig.DIRECCION_DB;
 
     public static final String ACCION_ADD    = "add";
     public static final String ACCION_UPDATE = "update";
@@ -56,7 +56,8 @@ public class miDBRemota extends Worker {
                             getInputData().getDouble("longitud", 0),
                             getInputData().getString("descripcion"),
                             getInputData().getDouble("distancia", 0),
-                            getInputData().getDouble("duracion", 0)
+                            getInputData().getDouble("duracion", 0),
+                            getInputData().getLong("userId", -1)
                     );
                     return id != -1
                             ? Result.success(new Data.Builder().putLong("id", id).build())
@@ -77,7 +78,9 @@ public class miDBRemota extends Worker {
                 }
 
                 case ACCION_GET: {
-                    ArrayList<Actividad> lista = getActividades();
+                    ArrayList<Actividad> lista = getActividades(
+                            getInputData().getLong("userId", -1)
+                    );
                     JSONArray jsonArray = new JSONArray();
                     for (Actividad a : lista) {
                         JSONObject obj = new JSONObject();
@@ -178,7 +181,7 @@ public class miDBRemota extends Worker {
     }
 
     private long addActividad(String nombre, double latitud, double longitud,
-                              String descripcion, double distancia, double duracion) {
+                              String descripcion, double distancia, double duracion, long userId) {
         HttpURLConnection conn = null;
         try {
             JSONObject params = new JSONObject();
@@ -189,6 +192,7 @@ public class miDBRemota extends Worker {
             params.put("descripcion", descripcion);
             params.put("distancia", distancia);
             params.put("duracion", duracion);
+            params.put("userId", userId);
 
             String respuesta = enviarPost(params);
             Log.d("miDBRemota", "Respuesta add: " + respuesta);
@@ -219,11 +223,12 @@ public class miDBRemota extends Worker {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    private ArrayList<Actividad> getActividades() {
+    private ArrayList<Actividad> getActividades(Long userId) {
         ArrayList<Actividad> lista = new ArrayList<>();
         try {
             JSONObject params = new JSONObject();
             params.put("accion", "getAll");
+            params.put("userId", userId);
 
             String respuesta = enviarPost(params);
             if (respuesta != null) {

@@ -5,13 +5,18 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -23,6 +28,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.Data;
@@ -44,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private MainRecyclerAdapter eladaptador;
     private ActivityResultLauncher<Intent> startActivityIntent;
     private ArrayList<Actividad> actividades;
-    private Long userId;
+    private Long userId = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +70,13 @@ public class MainActivity extends AppCompatActivity {
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Cargar userId persistente
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        long savedUserId = prefs.getLong("userId", -1);
+        if (savedUserId != -1) {
+            userId = savedUserId;
+        }
+
         startActivityIntent = // Logica para recibir datos de los intents
                 registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                         result -> {
@@ -77,6 +91,10 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     else if (logout){
                                         userId = null;
+                                        Log.d("miMain", "logouteado");
+                                        SharedPreferences.Editor editor = getSharedPreferences("AppPrefs", MODE_PRIVATE).edit();
+                                        editor.remove("userId");
+                                        editor.apply();
                                     }
                                     else {
                                         // Si hay un id es que hay una actividad que actualizar
@@ -86,38 +104,25 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                         else if (result.getData().hasExtra("user_id")) {
                                             userId = result.getData().getLongExtra("user_id", -1);
+                                            
+                                            // Guardar userId persistente
+                                            SharedPreferences.Editor editor = getSharedPreferences("AppPrefs", MODE_PRIVATE).edit();
+                                            editor.putLong("userId", userId);
+                                            editor.apply();
                                         }
                                         else {
                                             añadirActividad(result.getData());
                                         }
                                     }
+                                    cargarActividades();
                                 }
                             }
                         });
 
-        RecyclerView lista = findViewById(R.id.mrv);
+        if (userId!=null){
+            cargarActividades();
+        }
 
-        Data inputGetAll = new Data.Builder()
-                .putString("accion", miDBRemota.ACCION_GET)
-                .build();
-
-        OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(miDBRemota.class)
-                .setInputData(inputGetAll)
-                .build();
-
-        WorkManager.getInstance(this).enqueue(request);
-
-        WorkManager.getInstance(this)
-                .getWorkInfoByIdLiveData(request.getId())
-                .observe(this, workInfo -> {
-                    if (workInfo != null && workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-                        String listaJson = workInfo.getOutputData().getString("lista");
-                        actividades = parsearLista(listaJson);
-                        eladaptador = new MainRecyclerAdapter(actividades, this);
-                        lista.setAdapter(eladaptador);
-                        lista.setLayoutManager(new LinearLayoutManager(this));
-                    }
-                });
         FloatingActionButton Addbutton = findViewById(R.id.Addbutton);
         Addbutton.setOnClickListener(view -> abrirDetalles(-1)); // -1 para indicar que la actividad no está en la lista y hay que crearla
     }
@@ -144,6 +149,65 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(LocaleHelper.onAttach(newBase));
+    }
+
+    private void cargarActividades(){
+        RecyclerView lista = findViewById(R.id.mrv);
+
+        if (userId == null) {
+            actividades = new ArrayList<>();
+            eladaptador = new MainRecyclerAdapter(actividades, this);
+            lista.setAdapter(eladaptador);
+            lista.setLayoutManager(new LinearLayoutManager(this));
+
+            SharedPreferences.Editor editor = getSharedPreferences("AppPrefs", MODE_PRIVATE).edit();
+            editor.putFloat("duracion", 0f);
+            editor.putFloat("distancia", 0f);
+            editor.apply();
+            WidgetHelper.ejecutarActualizacion(this, -1);
+            return;
+        }
+
+        Data inputGetAll = new Data.Builder()
+                .putString("accion", miDBRemota.ACCION_GET)
+                .putLong("userId", userId)
+                .build();
+
+        OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(miDBRemota.class)
+                .setInputData(inputGetAll)
+                .build();
+
+        WorkManager.getInstance(this).enqueue(request);
+
+        WorkManager.getInstance(this)
+                .getWorkInfoByIdLiveData(request.getId())
+                .observe(this, workInfo -> {
+                    if (workInfo != null && workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+                        String listaJson = workInfo.getOutputData().getString("lista");
+                        actividades = parsearLista(listaJson);
+                        eladaptador = new MainRecyclerAdapter(actividades, this);
+                        lista.setAdapter(eladaptador);
+                        lista.setLayoutManager(new LinearLayoutManager(this));
+
+                        if (!actividades.isEmpty()) {
+                            Actividad ultima = actividades.get(actividades.size() - 1);
+                            float duracion = (float) ultima.getDuracion();
+                            float distancia = (float) ultima.getDistancia();
+
+                            SharedPreferences.Editor editor = getSharedPreferences("AppPrefs", MODE_PRIVATE).edit();
+                            editor.putFloat("duracion", duracion);
+                            editor.putFloat("distancia", distancia);
+                            editor.commit();
+                        }
+                        try{
+                            WidgetHelper.ejecutarActualizacion(MainActivity.this, userId != null ? userId : -1);
+                            Log.d("miWidget", "widget actualizado manualmente");
+                        }
+                        catch (Exception e){
+                            Log.d("miWIdget", e.getMessage());
+                        }
+                    }
+                });
     }
 
     private void actualizarActividad(long id, Intent data) {
@@ -203,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
                 .putString("descripcion", descripcion)
                 .putDouble("distancia", distancia)
                 .putDouble("duracion", duracion)
+                .putLong("userId", userId)
                 .build();
 
         OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(miDBRemota.class)
@@ -268,12 +333,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void abrirDetalles(int position) {
-        Intent intent = new Intent(this, DetallesActivity.class);
-        if (position != -1){
-            Actividad actividadSeleccionada = actividades.get(position);
-            intent.putExtra("actividad_id", actividadSeleccionada.getId());
+        if (userId != null){
+            Intent intent = new Intent(this, DetallesActivity.class);
+            if (position != -1){
+                Actividad actividadSeleccionada = actividades.get(position);
+                intent.putExtra("actividad_id", actividadSeleccionada.getId());
+                intent.putExtra("userId", userId);
+            }
+            startActivityIntent.launch(intent);
         }
-        startActivityIntent.launch(intent);
+        else{
+            gestionarLogin();
+        }
     }
 
     public void abrirConfig() {

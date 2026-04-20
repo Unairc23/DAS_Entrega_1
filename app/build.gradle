@@ -23,6 +23,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "MAPS_API_KEY", "\"${secretProperties['MAPS_API_KEY']}\""
         manifestPlaceholders = [MAPS_API_KEY: secretProperties['MAPS_API_KEY']]
+        buildConfigField "String", "DIRECCION_DB", "\"${secretProperties['DIRECCION_DB']}\""
+        manifestPlaceholders = [DIRECCION_DB: secretProperties['DIRECCION_DB']]
     }
 
     buildTypes {
@@ -33,6 +35,7 @@ android {
     }
     buildFeatures {
         buildConfig true
+        viewBinding true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11

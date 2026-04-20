@@ -37,6 +37,7 @@ public class DetallesActivity extends AppCompatActivity {
 
     private MapaFragment gMap;
     private long actividadId = -1;
+    private Long userId;
     private double latOriginal;
     private double lonOriginal;
 

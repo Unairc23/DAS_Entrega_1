@@ -33,10 +33,15 @@ import androidx.work.WorkManager;
 
 import com.google.android.material.appbar.MaterialToolbar;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 public class PerfilActivity extends AppCompatActivity {
     private static long userId;
@@ -73,6 +78,17 @@ public class PerfilActivity extends AppCompatActivity {
 
         // Obtener datos del usuario
         userId = getIntent().getLongExtra("user_id", -1);
+        cargarDatosUser();
+        cargarResumenActividades();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase));
+    }
+
+    private void cargarDatosUser(){
+        ImageView perfilImage = findViewById(R.id.perfilImage);
         Data input = new Data.Builder()
                 .putString("accion", miDBRemota.ACCION_GET_USER)
                 .putLong("id", userId)
@@ -94,15 +110,15 @@ public class PerfilActivity extends AppCompatActivity {
                 if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
                     Data output = workInfo.getOutputData();
                     String nombre = output.getString("nombre");
-                    if (nombre != null){
+                    if (nombre != null) {
                         ((TextView) findViewById(R.id.nombreText)).setText(nombre);
                     }
 
                     String path = output.getString("imagenPath");
                     Log.d("miDBRemota", "path: " + path);
-                    if (path != null){
+                    if (path != null) {
                         Bitmap bitmap = BitmapFactory.decodeFile(path);
-                        if (bitmap != null){
+                        if (bitmap != null) {
                             perfilImage.setImageBitmap(bitmap);
                         }
                     }
@@ -112,15 +128,53 @@ public class PerfilActivity extends AppCompatActivity {
         liveData.observeForever(observerRef[0]);
     }
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(LocaleHelper.onAttach(newBase));
+    private void cargarResumenActividades(){
+
+        Data inputActividades = new Data.Builder()
+                .putString("accion", miDBRemota.ACCION_GET)
+                .putLong("userId", userId)
+                .build();
+
+        OneTimeWorkRequest requestActividades = new OneTimeWorkRequest.Builder(miDBRemota.class)
+                .setInputData(inputActividades).build();
+
+        WorkManager.getInstance(this).enqueue(requestActividades);
+
+        LiveData<WorkInfo> liveDataActividades = WorkManager.getInstance(this)
+                .getWorkInfoByIdLiveData(requestActividades.getId());
+
+        Observer<WorkInfo>[] observerActividades = new Observer[1];
+        observerActividades[0] = workInfo -> {
+            if (workInfo != null && workInfo.getState().isFinished()) {
+                liveDataActividades.removeObserver(observerActividades[0]);
+                if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+                    Data output = workInfo.getOutputData();
+                    String listaJson = output.getString("lista");
+                    try {
+                        Double distanciaTotal = 0.0;
+                        Double duracionTotal = 0.0;
+                        JSONArray array = new JSONArray(listaJson);
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject obj = array.getJSONObject(i);
+                            distanciaTotal += obj.getDouble("distancia");
+                            duracionTotal += obj.getDouble("duracion");
+                        }
+                        ((TextView) findViewById(R.id.kilometrosText)).setText(String.valueOf(distanciaTotal));
+                        ((TextView) findViewById(R.id.horasText)).setText(String.valueOf((int) (duracionTotal / 3600)));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        liveDataActividades.observeForever(observerActividades[0]);
     }
 
     private void logout(){
+        Log.d("miMain", "logouteando");
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("logout", true);
-        startActivity(intent);
+        setResult(RESULT_OK, intent);
         finish();
     }
 

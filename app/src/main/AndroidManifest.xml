@@ -12,7 +12,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
         android:allowBackup="true"
@@ -24,6 +25,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DAS_Entrega_1"
         android:usesCleartextTraffic="true">
+        <receiver
+            android:name=".ActividadWidget"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/actividad_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".WidgetHelper"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.das_entrega_1.UPDATE_WIDGET" />
+            </intent-filter>
+        </receiver>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -41,6 +61,7 @@
         <activity
             android:name=".PerfilActivity"
             android:exported="false" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />

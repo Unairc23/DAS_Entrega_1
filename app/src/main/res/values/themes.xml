@@ -1,4 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+
     <style name="Base.Theme.DAS_Entrega_1" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/base_primary</item>
         <item name="colorOnPrimary">@color/base_on_primary</item>
@@ -21,5 +22,20 @@
         <item name="colorPrimaryContainer">@color/red_primary_container</item>
         <item name="colorOnPrimaryContainer">@color/red_on_primary_container</item>
         <item name="colorSecondary">@color/red_secondary</item>
+    </style>
+
+    <style name="Theme.DAS_Entrega_1.AppWidgetContainerParent" parent="@android:style/Theme.DeviceDefault">
+        <!-- Radius of the outer bound of widgets to make the rounded corners -->
+        <item name="appWidgetRadius">16dp</item>
+        <!--
+        Radius of the inner view's bound of widgets to make the rounded corners.
+        It needs to be 8dp or less than the value of appWidgetRadius
+        -->
+        <item name="appWidgetInnerRadius">8dp</item>
+    </style>
+
+    <style name="Theme.DAS_Entrega_1.AppWidgetContainer" parent="Theme.DAS_Entrega_1.AppWidgetContainerParent">
+        <!-- Apply padding to avoid the content of the widget colliding with the rounded corners -->
+        <item name="appWidgetPadding">16dp</item>
     </style>
 </resources>
