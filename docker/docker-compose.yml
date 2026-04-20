@@ -11,7 +11,8 @@ services:
       volumes:
         - ./app:/var/www/html/
         - ./uploads:/var/www/html/uploads
-
+  
+  # Recomendable cambiar credenciales para desplegar de forma segura
    db:
      image: mariadb:10.8.2
      restart: always
@@ -25,6 +26,7 @@ services:
      ports:
        - "8889:3306"
 
+# Recomendable cambiar credenciales para desplegar de forma segura
    phpmyadmin:
      image: phpmyadmin/phpmyadmin:latest
      links:
