@@ -40,6 +40,7 @@ public class MapaFragment extends SupportMapFragment implements OnMapReadyCallba
 
         activarUbicacionYCentrar();
 
+        // Si ya se habia pedido centrar el mapa antes de estar listo, los valores se guardan en lat / lon
         if (lat != null && lon != null) {
             centrar(lat, lon);
             lat = null;

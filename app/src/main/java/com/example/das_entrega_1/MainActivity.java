@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                                         borrarActividad(id);
                                     }
                                     else if (logout){
+                                        // Se resetea el user persistente
                                         userId = null;
                                         Log.d("miMain", "logouteado");
                                         SharedPreferences.Editor editor = getSharedPreferences("AppPrefs", MODE_PRIVATE).edit();
@@ -155,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView lista = findViewById(R.id.mrv);
 
         if (userId == null) {
+            // Si no hay userId las actividades estan vacias
             actividades = new ArrayList<>();
             eladaptador = new MainRecyclerAdapter(actividades, this);
             lista.setAdapter(eladaptador);
@@ -168,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        // Info que se le envia al worker
         Data inputGetAll = new Data.Builder()
                 .putString("accion", miDBRemota.ACCION_GET)
                 .putLong("userId", userId)
@@ -218,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
         double distancia = data.getDoubleExtra("distancia", 0.0);
         double duracion = data.getDoubleExtra("duracion", 0);
 
+        // Info que se le envia al worker
         Data input = new Data.Builder()
                 .putString("accion", miDBRemota.ACCION_UPDATE)
                 .putLong("id", id)
@@ -259,6 +263,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (nombre == null || nombre.isEmpty()) return;
 
+        // Info que se le envia al worker
         Data input = new Data.Builder()
                 .putString("accion", miDBRemota.ACCION_ADD)
                 .putString("nombre", nombre)
@@ -364,7 +369,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private ArrayList<Actividad> parsearLista(String json) {
+    private ArrayList<Actividad> parsearLista(String json) { // Metodo para pasar JSON a Actividad
         ArrayList<Actividad> lista = new ArrayList<>();
         try {
             JSONArray array = new JSONArray(json);

@@ -48,6 +48,7 @@ public class miDBRemota extends Worker {
         if (accion == null) return Result.failure();
 
         try {
+            // Depende del parametro accion que recibe el woker se ejecutan diferentes funciones
             switch (accion) {
                 case ACCION_ADD: {
                     long id = addActividad(

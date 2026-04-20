@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+        // Info que se le envia al worker
         Data input = new Data.Builder()
                 .putString("accion", miDBRemota.ACCION_LOGIN)
                 .putString("nombre", nombre)
@@ -90,14 +91,15 @@ public class LoginActivity extends AppCompatActivity {
         LiveData<WorkInfo> liveData = WorkManager.getInstance(this)
                 .getWorkInfoByIdLiveData(request.getId());
 
-        Observer<WorkInfo>[] observerRef = new Observer[1];
+        Observer<WorkInfo>[] observerRef = new Observer[1]; // Guardar el observer para poder eliminarlo
         observerRef[0] = workInfo -> {
             Log.d("workinfo", String.valueOf(workInfo));
             if (workInfo != null && workInfo.getState().isFinished()) {
-                liveData.removeObserver(observerRef[0]);
+                liveData.removeObserver(observerRef[0]); // Eliminar el observer
                 if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
                     long userId = workInfo.getOutputData().getLong("id", -1);
                     if (userId != -1){
+                        // Si se ha logeado correctamente se vuelve a Main
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         intent.putExtra("user_id", userId);
                         setResult(RESULT_OK, intent);
@@ -105,6 +107,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
                 else if (workInfo.getState() == WorkInfo.State.FAILED){
+                    // Mensaje de usuario incorrecto / ocupado
                     Toast.makeText(LoginActivity.this, getString(R.string.errorLogin), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -128,6 +131,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+        // Info que se le envia al worker
         Data input = new Data.Builder()
                 .putString("accion", miDBRemota.ACCION_REGISTER)
                 .putString("nombre", nombre)
@@ -142,11 +146,11 @@ public class LoginActivity extends AppCompatActivity {
         LiveData<WorkInfo> liveData = WorkManager.getInstance(this)
                 .getWorkInfoByIdLiveData(request.getId());
 
-        Observer<WorkInfo>[] observerRef = new Observer[1];
+        Observer<WorkInfo>[] observerRef = new Observer[1]; // Guardar el observer para poder eliminarlo
         observerRef[0] = workInfo -> {
             Log.d("workinfo", String.valueOf(workInfo));
             if (workInfo != null && workInfo.getState().isFinished()) {
-                liveData.removeObserver(observerRef[0]);
+                liveData.removeObserver(observerRef[0]); // Eliminar el observer
                 if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
                     long userId = workInfo.getOutputData().getLong("id", -1);
                     if (userId != -1){

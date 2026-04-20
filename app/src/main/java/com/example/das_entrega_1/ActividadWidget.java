@@ -26,6 +26,7 @@ public class ActividadWidget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
+        // Recuperar userId para luego buscar sus actividades
         SharedPreferences prefs = context.getSharedPreferences("AppPrefs", MODE_PRIVATE);
         long savedUserId = prefs.getLong("userId", -1);
         Log.d("miWidget", "updateAppWidget llamado, userId=" + savedUserId);
@@ -45,6 +46,7 @@ public class ActividadWidget extends AppWidgetProvider {
     public void onEnabled(Context context) {
         Log.d("miWidget", "onEnabled llamado");
 
+        // Recuperar userId para luego buscar sus actividades
         SharedPreferences prefs = context.getSharedPreferences("AppPrefs", MODE_PRIVATE);
         long savedUserId = prefs.getLong("userId", -1);
         ejecutarActualizacion(context, savedUserId);
@@ -53,6 +55,7 @@ public class ActividadWidget extends AppWidgetProvider {
 
     @Override
     public void onDisabled(Context context) {
+        // Elimin la alarma una vez se destruye el widget
         AlarmManager alarmManager =
                 (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 

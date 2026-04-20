@@ -39,6 +39,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainViewHolder> im
         holder.eltiempo.setText(String.format("%02d:%02d", horas, minutos));
         holder.ladescripcion.setText(actividad.getDescripcion());
 
+        // Crea imagen estatica del mapa
         String url = "https://maps.googleapis.com/maps/api/staticmap?"
                 + "center=" + actividad.getLat() + "," + actividad.getLon()
                 + "&zoom=15"

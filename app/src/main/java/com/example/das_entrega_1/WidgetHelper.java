@@ -11,16 +11,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import androidx.work.Data;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 public class WidgetHelper extends BroadcastReceiver {
 
@@ -30,12 +21,13 @@ public class WidgetHelper extends BroadcastReceiver {
 
         long userId = intent.getLongExtra("userId", -1);
 
-        // El broadcast solo actualiza el primer widget activo (todos comparten datos)
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
         ComponentName tipowidget = new ComponentName(context, ActividadWidget.class);
         int[] appWidgetIds = manager.getAppWidgetIds(tipowidget);
 
-        if (appWidgetIds.length == 0) return;
+        if (appWidgetIds.length == 0) {
+            return; // Si no hay ids es que no hay widgets que actualizar
+        }
 
         ejecutarActualizacion(context, userId);
     }
@@ -43,6 +35,7 @@ public class WidgetHelper extends BroadcastReceiver {
     public static void ejecutarActualizacion(Context context, long userId) {
         Log.d("miWidget", "ejecutarActualizacion llamado, userId=" + userId);
 
+        // Datos guardados en prefs para evitar problemas con Workers y trabajos en segundo plano
         SharedPreferences prefs = context.getSharedPreferences("AppPrefs", MODE_PRIVATE);
         float distancia = prefs.getFloat("distancia", 0f);
         float duracion = prefs.getFloat("duracion", 0f);
@@ -57,6 +50,7 @@ public class WidgetHelper extends BroadcastReceiver {
 
         ComponentName tipowidget = new ComponentName(context, ActividadWidget.class);
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
+        // Llamar al widget para que actualice
         manager.updateAppWidget(tipowidget, remoteViews);
     }
 }

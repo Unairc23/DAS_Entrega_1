@@ -72,6 +72,7 @@ public class DetallesActivity extends AppCompatActivity {
             bButton.setOnClickListener(view -> Borrar());
             aButton.setOnClickListener(view -> Aceptar());
 
+            // Info que se le envia al worker
             Data input = new Data.Builder()
                     .putString("accion", miDBRemota.ACCION_GET_ID)
                     .putLong("id", actividadId)
@@ -85,11 +86,11 @@ public class DetallesActivity extends AppCompatActivity {
             LiveData<WorkInfo> liveData = WorkManager.getInstance(this)
                     .getWorkInfoByIdLiveData(request.getId());
 
-            Observer<WorkInfo>[] observerRef = new Observer[1];
+            Observer<WorkInfo>[] observerRef = new Observer[1]; // Guardar el observer para poder eliminarlo
             observerRef[0] = workInfo -> {
                 Log.d("workinfo", String.valueOf(workInfo));
                 if (workInfo != null && workInfo.getState().isFinished()) {
-                    liveData.removeObserver(observerRef[0]);
+                    liveData.removeObserver(observerRef[0]); // Eliminar el observer
                     if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
                         try {
                             String actividadJson = workInfo.getOutputData().getString("actividad");

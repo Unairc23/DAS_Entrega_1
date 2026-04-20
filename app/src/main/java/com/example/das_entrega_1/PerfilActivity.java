@@ -89,6 +89,8 @@ public class PerfilActivity extends AppCompatActivity {
 
     private void cargarDatosUser(){
         ImageView perfilImage = findViewById(R.id.perfilImage);
+
+        // Info que se le envia al worker
         Data input = new Data.Builder()
                 .putString("accion", miDBRemota.ACCION_GET_USER)
                 .putLong("id", userId)
@@ -102,11 +104,11 @@ public class PerfilActivity extends AppCompatActivity {
         LiveData<WorkInfo> liveData = WorkManager.getInstance(this)
                 .getWorkInfoByIdLiveData(request.getId());
 
-        Observer<WorkInfo>[] observerRef = new Observer[1];
+        Observer<WorkInfo>[] observerRef = new Observer[1]; // Guardar el observer para poder eliminarlo
         observerRef[0] = workInfo -> {
             Log.d("workinfo", String.valueOf(workInfo));
             if (workInfo != null && workInfo.getState().isFinished()) {
-                liveData.removeObserver(observerRef[0]);
+                liveData.removeObserver(observerRef[0]); // Eliminar el observer
                 if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
                     Data output = workInfo.getOutputData();
                     String nombre = output.getString("nombre");
@@ -116,6 +118,7 @@ public class PerfilActivity extends AppCompatActivity {
 
                     String path = output.getString("imagenPath");
                     Log.d("miDBRemota", "path: " + path);
+                    // Carga la iamgen si la encuentra en el path, sino carga default
                     if (path != null) {
                         Bitmap bitmap = BitmapFactory.decodeFile(path);
                         if (bitmap != null) {
@@ -137,6 +140,7 @@ public class PerfilActivity extends AppCompatActivity {
 
     private void cargarResumenActividades(){
 
+        // Info que se le envia al worker
         Data inputActividades = new Data.Builder()
                 .putString("accion", miDBRemota.ACCION_GET)
                 .putLong("userId", userId)
@@ -150,10 +154,10 @@ public class PerfilActivity extends AppCompatActivity {
         LiveData<WorkInfo> liveDataActividades = WorkManager.getInstance(this)
                 .getWorkInfoByIdLiveData(requestActividades.getId());
 
-        Observer<WorkInfo>[] observerActividades = new Observer[1];
+        Observer<WorkInfo>[] observerActividades = new Observer[1]; // Guardar el observer para poder eliminarlo
         observerActividades[0] = workInfo -> {
             if (workInfo != null && workInfo.getState().isFinished()) {
-                liveDataActividades.removeObserver(observerActividades[0]);
+                liveDataActividades.removeObserver(observerActividades[0]); // Eliminar el observer
                 if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
                     Data output = workInfo.getOutputData();
                     String listaJson = output.getString("lista");
