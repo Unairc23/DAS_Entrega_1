@@ -39,4 +39,10 @@
     <string name="password">Pasahitza</string>
     <string name="errorUser">Erabiltzaile izena ezin da hutsik egon</string>
     <string name="add_widget">Widget gehitu</string>
+    <string name="tiempo">denbora</string>
+    <string name="distancia">distantzia</string>
+    <string name="ultima_actividad">AZKEN AKTIBITATEA</string>
+    <string name="logout">Saioa Itxi</string>
+    <string name="distanciaTot">Distantzia totala:</string>
+    <string name="tiempotot">Denbora totala:</string>
 </resources>

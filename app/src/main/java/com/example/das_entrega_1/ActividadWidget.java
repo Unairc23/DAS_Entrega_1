@@ -28,7 +28,6 @@ public class ActividadWidget extends AppWidgetProvider {
 
         SharedPreferences prefs = context.getSharedPreferences("AppPrefs", MODE_PRIVATE);
         long savedUserId = prefs.getLong("userId", -1);
-
         Log.d("miWidget", "updateAppWidget llamado, userId=" + savedUserId);
 
         ejecutarActualizacion(context, savedUserId);

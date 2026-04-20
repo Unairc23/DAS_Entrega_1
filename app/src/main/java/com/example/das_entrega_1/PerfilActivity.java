@@ -119,8 +119,15 @@ public class PerfilActivity extends AppCompatActivity {
                     if (path != null) {
                         Bitmap bitmap = BitmapFactory.decodeFile(path);
                         if (bitmap != null) {
+                            Log.d("miDBRemota", "bitmap: " + bitmap);
                             perfilImage.setImageBitmap(bitmap);
                         }
+                        else{
+                            perfilImage.setImageResource(R.drawable.user_default);
+                        }
+                    }
+                    else{
+                        perfilImage.setImageResource(R.drawable.user_default);
                     }
                 }
             }
@@ -159,8 +166,8 @@ public class PerfilActivity extends AppCompatActivity {
                             distanciaTotal += obj.getDouble("distancia");
                             duracionTotal += obj.getDouble("duracion");
                         }
-                        ((TextView) findViewById(R.id.kilometrosText)).setText(String.valueOf(distanciaTotal));
-                        ((TextView) findViewById(R.id.horasText)).setText(String.valueOf((int) (duracionTotal / 3600)));
+                        ((TextView) findViewById(R.id.kilometrosText)).setText(String.valueOf(distanciaTotal) + "km");
+                        ((TextView) findViewById(R.id.horasText)).setText(String.valueOf((int) (duracionTotal / 3600)) + "h");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

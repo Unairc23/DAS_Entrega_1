@@ -41,4 +41,10 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Añadir widget</string>
     <string name="app_widget_description">This is an app widget description</string>
+    <string name="tiempo">tiempo</string>
+    <string name="distancia">distancia</string>
+    <string name="ultima_actividad">ÚLTIMA ACTIVIDAD</string>
+    <string name="logout">Cerrar Sesión</string>
+    <string name="distanciaTot">Distancia total:</string>
+    <string name="tiempotot">Tiempo total:</string>
 </resources>

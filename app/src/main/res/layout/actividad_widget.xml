@@ -1,47 +1,94 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Widget.DAS_Entrega_1.AppWidget.Container"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/Theme.DAS_Entrega_1.AppWidgetContainer">
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/widget_background">
 
     <TextView
-        android:id="@+id/distanciaText"
-        style="@style/Widget.DAS_Entrega_1.AppWidget.InnerView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="248dp"
-        android:layout_marginBottom="360dp"
-        android:contentDescription="@string/appwidget_text"
-        android:text="@string/appwidget_text"
-        android:textSize="12sp"
-        android:textStyle="bold|italic" />
+        android:text="@string/ultima_actividad"
+        android:textSize="10sp"
+        android:textColor="#80FFFFFF"
+        android:letterSpacing="0.08"
+        android:textAllCaps="true"
+        android:layout_marginBottom="12dp"/>
 
-    <TextView
-        android:id="@+id/tiempoText"
-        style="@style/Widget.DAS_Entrega_1.AppWidget.InnerView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="8dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="242dp"
-        android:contentDescription="@string/appwidget_text"
-        android:text="@string/appwidget_text"
-        android:textSize="12sp"
-        android:textStyle="bold|italic" />
+        android:orientation="horizontal"
+        android:weightSum="2">
 
-    <ImageView
-        android:id="@+id/mapaView"
-        android:layout_width="395dp"
-        android:layout_height="530dp"
-        app:srcCompat="@drawable/icono_app" />
-</RelativeLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/widget_card_background"
+            android:padding="12dp"
+            android:layout_marginEnd="6dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tiempo"
+                android:textSize="10sp"
+                android:textColor="#70FFFFFF"
+                android:layout_marginBottom="6dp"/>
+
+            <TextView
+                android:id="@+id/tiempoText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:textSize="19sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="hh:mm"
+                android:textSize="9sp"
+                android:textColor="#50FFFFFF"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/widget_card_background"
+            android:padding="12dp"
+            android:layout_marginStart="6dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/distancia"
+                android:textSize="10sp"
+                android:textColor="#70FFFFFF"
+                android:layout_marginBottom="6dp"/>
+
+            <TextView
+                android:id="@+id/distanciaText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0"
+                android:textSize="19sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="km"
+                android:textSize="9sp"
+                android:textColor="#50FFFFFF"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

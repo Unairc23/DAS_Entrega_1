@@ -40,4 +40,10 @@
     <string name="errorUser">The username can\'t be empty</string>
     <string name="add_widget">Add widget</string>
     <string name="errorLogin">Incorrect user o password</string>
+    <string name="tiempo">time</string>
+    <string name="distancia">distance</string>
+    <string name="ultima_actividad">LAST ACTIVITY</string>
+    <string name="logout">Logout</string>
+    <string name="distanciaTot">Total distance:</string>
+    <string name="tiempotot">Total time:</string>
 </resources>

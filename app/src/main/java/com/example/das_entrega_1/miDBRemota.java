@@ -142,6 +142,7 @@ public class miDBRemota extends Worker {
                     if (user != null) {
                         String nombre = user.optString("Nombre");
                         String imagenBase64 = user.optString("imagen");
+                        Log.d("miDBRemota", "imagen: " + user.optString("imagen"));
                         
                         Data.Builder outputData = new Data.Builder().putString("nombre", nombre);
                         
@@ -156,6 +157,9 @@ public class miDBRemota extends Worker {
                             } catch (Exception e) {
                                 Log.e("miDBRemota", "Error guardando imagen: " + e.getMessage());
                             }
+                        }
+                        else{
+                            outputData.putString("imagenPath", null);
                         }
                         
                         return Result.success(outputData.build());
